@@ -1,12 +1,19 @@
 /// <reference types="node" />
-import { SocketMiddleware } from "../internal/ws/server.js";
-import { Server } from "node:http";
-import { Express } from "express";
-import Queue from "../internal/queues/index.js";
+import { SocketMiddleware, WebSocketTokenServer } from "../internal/ws/server";
+import Queue from "../internal/queues/index";
+import express from "express";
+import { Server as ServerHTTP } from "http";
+import { Server as ServerHTTPS } from "http";
 declare type Method = {
     (): any;
     middleware?: Function;
 };
+export interface PrismApp {
+    app: express.Application;
+    server: ServerHTTP | ServerHTTPS;
+    root: string;
+    wss: WebSocketTokenServer;
+}
 export interface HTTPModuleExports {
     default?: Function;
     get?: Method;
@@ -17,17 +24,12 @@ export interface HTTPModuleExports {
     middleware?: Function[];
 }
 export interface SocketModuleExports {
-    default?: Function;
+    default?: SocketMiddleware;
     middleware?: SocketMiddleware[];
 }
 export interface RouteDefinition {
     route: string;
     filename: string;
-}
-export interface HTTPCore {
-    app: Express;
-    server: Server;
-    root: string;
 }
 export interface QueueModuleExports {
     default: Function;

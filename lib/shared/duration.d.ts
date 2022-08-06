@@ -128,14 +128,14 @@
  * @returns {number} The duration in number.
  *                   If the given duration is invalid, the returned duration will be `0` *(zero)*.
  */
-declare function duration(duration: any, defaultOrOptions?: any, options?: any): any;
+declare function duration(duration: any, defaultOrOptions?: any, options?: any): number;
 /**
  * Creates a customized duration function with the given arguments.
  *
  * @see {@link @standards/duration~duration}
  * @function createCustom
  *
- * @param {string|number|*} [duration] - The duration(s) to parse.
+ * @param {string|number|*} [duration_] - The duration(s) to parse.
  * @param {string|number|durationOptions} [defaultOrOptions] - The default duration as a fallback or additional options.
  * @param {durationOptions} [options] - Additional options to change the default behavior.
  *
@@ -160,8 +160,8 @@ declare function duration(duration: any, defaultOrOptions?: any, options?: any):
  * // will return 2 hours in seconds, since the return unit is "sec"
  * custom('2 hours') // === 7200
  *
- * @returns {duration} The customized duration function.
+ * @returns {Function} The customized duration function.
  */
-declare function createCustom(duration_: any, defaultOrOptions: any, options: any): (dur: any, def: any, opt: any) => any;
+declare function createCustom(duration_: any, defaultOrOptions: any, options: any): Function;
 export { createCustom };
 export default duration;

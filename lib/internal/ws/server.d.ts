@@ -42,8 +42,6 @@ export declare class Connection extends EventEmitter {
     applyListeners(): void;
 }
 export declare type SocketMiddleware = (c: WSContext) => Promise<any>;
-interface SocketServerOptions extends ServerOptions {
-}
 export declare class WebSocketTokenServer extends WebSocketServer {
     connections: {
         [connectionId: string]: Connection;
@@ -58,10 +56,13 @@ export declare class WebSocketTokenServer extends WebSocketServer {
     remoteAddressToConnections: {
         [address: string]: Connection[];
     };
-    constructor(opts: SocketServerOptions);
+    rooms: {
+        [roomName: string]: string[];
+    };
+    constructor(opts: ServerOptions);
     destroyConnection(c: Connection): void;
     applyListeners(): void;
-    broadcast(command: string, payload: any): void;
+    broadcast(command: string, payload: any, connections?: Connection[]): void;
     /**
      * Given a Connection, broadcasts only to all other Connections that share
      * the same connection.remoteAddress.
@@ -69,8 +70,20 @@ export declare class WebSocketTokenServer extends WebSocketServer {
      * Use cases: auth changes, push notifications.
      */
     broadcastRemoteAddress(c: Connection, command: string, payload: any): void;
-    registerCommand(command: string, callback: Function, ...middlewares: SocketMiddleware[]): void;
+    registerCommand(command: string, callback: SocketMiddleware, ...middlewares: SocketMiddleware[]): void;
     addMiddlewareToCommand(command: string, ...middlewares: SocketMiddleware[]): void;
+    /**
+     * @example
+     * ```typescript
+     * server.registerCommand("join:room", async (payload: { roomName: string }, connection: Connection) => {
+     *   server.addToRoom(payload.roomName, connection);
+     *   server.broadcastRoom(payload.roomName, "joined", { roomName: payload.roomName });
+     * });
+     * ```
+     */
+    addToRoom(roomName: string, connection: Connection): void;
+    removeFromRoom(roomName: string, connection: Connection): void;
+    clearRoom(roomName: string): void;
     runCommand(id: number, command: string, payload: any, connection: Connection): Promise<void>;
 }
 export {};

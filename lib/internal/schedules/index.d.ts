@@ -1,5 +1,5 @@
-import { HTTPCore } from "../../shared/definitions.js";
-export { CRON } from "./common.js";
+import { PrismApp } from "../../shared/definitions";
+export { CRON } from "./common";
 export interface Schedule {
     /** A cron expression. */
     cron: string;
@@ -8,4 +8,4 @@ export interface Schedule {
     /** A timezone string, e.g. "America/Los_Angeles". */
     timezone: string;
 }
-export default function createSchedules(core: HTTPCore, rootDir: string): Promise<void>;
+export default function createSchedules(app: PrismApp): Promise<void>;

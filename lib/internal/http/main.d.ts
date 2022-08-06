@@ -1,2 +1,3 @@
-import { HTTPCore, RouteDefinition } from "#shared/definitions.js";
-export default function createHTTPHandlers(core: HTTPCore, rootDir: string): Promise<RouteDefinition[]>;
+import { RouteDefinition } from "../../shared/definitions";
+import { PrismApp } from "../../shared/definitions";
+export default function createHTTPHandlers(app: PrismApp): Promise<RouteDefinition[]>;

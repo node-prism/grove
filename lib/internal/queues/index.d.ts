@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import EventEmitter from "node:events";
-import { HTTPCore } from "../../shared/definitions.js";
+import { PrismApp } from "../../shared/definitions";
 interface QueueConfig {
     /** When a worker becomes free, it will wait `delay` before working. */
     delay?: string | number;
@@ -25,7 +25,7 @@ interface QueueConfig {
         expiration?: string | number;
     };
 }
-export declare function createQueues(_core: HTTPCore, rootDir: string): Promise<void>;
+export declare function createQueues(app: PrismApp): Promise<void>;
 export default class Queue<Payload> extends EventEmitter {
     #private;
     readonly config: QueueConfig;
@@ -60,7 +60,10 @@ export default class Queue<Payload> extends EventEmitter {
      * the length of the current bucketQueue, giving it the lowest
      * possible priority.
      */
-    push(payload: Payload, priority?: number): string;
+    push(payload: Payload, { callback, priority }?: {
+        callback?: () => void;
+        priority?: number;
+    }): string;
     /**
      * A group returns a new Queue or existing Queue
      * that relates to the given name. They are short living
