@@ -4,7 +4,7 @@ API structure.
 # Installation
 
 ```bash
-npm i @prism/server
+npm i @prsm/server
 ```
 
 # Quickstart
