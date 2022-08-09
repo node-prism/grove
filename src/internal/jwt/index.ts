@@ -241,11 +241,11 @@ function verify(
     );
   }
 
-  if (opts.exp === true && payload.exp !== undefined) {
+  if (payload.exp !== undefined) {
     result.exp = payload.exp < now;
   }
 
-  if (opts.nbf === true && payload.nbf !== undefined) {
+  if (payload.nbf !== undefined) {
     result.nbf = payload.nbf <= now;
   }
 
