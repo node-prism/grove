@@ -1,12 +1,13 @@
 import express from "express";
 import { Server as ServerHTTP, Server as ServerHTTPS } from "http";
+import { Context } from "src/internal/http";
 import { WebSocketServer } from "ws";
 import Queue from "../internal/queues/index";
 import { SocketMiddleware, WebSocketTokenServer } from "../internal/ws/server";
 
 
 type Method = {
-  (): any;
+  (c: Context): any;
   middleware?: Function;
 };
 
