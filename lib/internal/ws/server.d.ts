@@ -57,7 +57,7 @@ export declare class WebSocketTokenServer extends WebSocketServer {
         [address: string]: Connection[];
     };
     rooms: {
-        [roomName: string]: string[];
+        [roomName: string]: Set<string>;
     };
     constructor(opts: ServerOptions);
     destroyConnection(c: Connection): void;

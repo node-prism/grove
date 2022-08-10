@@ -136,7 +136,7 @@ export class WebSocketTokenServer extends WebSocketServer {
   globalMiddlewares: SocketMiddleware[] = [];
   middlewares: { [key: string]: SocketMiddleware[] } = {};
   remoteAddressToConnections: { [address: string]: Connection[] } = {};
-  rooms: { [roomName: string]: string[] } = {};
+  rooms: { [roomName: string]: Set<string> } = {};
 
   constructor(opts: ServerOptions) {
     super({ ...opts, noServer: true });
@@ -180,9 +180,7 @@ export class WebSocketTokenServer extends WebSocketServer {
 
         // Remove this Connection from any rooms it may be in.
         Object.keys(this.rooms).forEach((roomName) => {
-          this.rooms[roomName] = this.rooms[roomName].filter(
-            (id) => id !== connection.id
-          );
+          this.rooms[roomName].delete(connection.id);
         });
       });
 
@@ -247,19 +245,17 @@ export class WebSocketTokenServer extends WebSocketServer {
    * ```
    */
   addToRoom(roomName: string, connection: Connection) {
-    this.rooms[roomName] = this.rooms[roomName] || [];
-    if (!this.rooms[roomName].includes(connection.id)) {
-      this.rooms[roomName].push(connection.id);
-    }
+    this.rooms[roomName] = this.rooms[roomName] || new Set();
+    this.rooms[roomName].add(connection.id);
   }
 
   removeFromRoom(roomName: string, connection: Connection) {
     if (!this.rooms[roomName]) return;
-    this.rooms[roomName] = this.rooms[roomName].filter((id) => id !== connection.id);
+    this.rooms[roomName].delete(connection.id);
   }
 
   clearRoom(roomName: string) {
-    this.rooms[roomName] = [];
+    this.rooms[roomName] = new Set();
   }
 
   async runCommand(id: number, command: string, payload: any, connection: Connection) {
