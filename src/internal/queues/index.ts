@@ -195,7 +195,9 @@ export default class Queue<Payload> extends EventEmitter {
     if (this.timeout_ms) {
       try {
         await Promise.race([this.createTimeoutPromise(uuid), this.executor(payload)]);
-        callback({ uuid, payload });
+
+        callback && callback({ uuid, payload });
+
         this.emitter.emit("complete", { task: { uuid, payload } });
         clearTimeout(this.timeouts[uuid]);
       } catch (err) {
@@ -204,7 +206,9 @@ export default class Queue<Payload> extends EventEmitter {
     } else {
       try {
         await this.executor(payload);
-        callback({ uuid, payload });
+
+        callback && callback({ uuid, payload });
+
         this.emitter.emit("complete", { task: { uuid, payload } });
       } catch (err) {
         this.emitter.emit("failed", { task: { uuid, payload } });
