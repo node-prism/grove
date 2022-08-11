@@ -21,22 +21,18 @@ export interface Command {
 }
 
 class Latency {
-  checking = false;
   start = 0;
   end = 0;
   ms = 0;
   interval: NodeJS.Timeout = null;
 
   request() {
-    // if (this.checking) {}
     this.start = Date.now();
-    this.checking = true;
   }
 
   response() {
     this.end = Date.now();
     this.ms = this.end - this.start;
-    this.checking = false;
   }
 }
 
