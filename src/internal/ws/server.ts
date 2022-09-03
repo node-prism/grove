@@ -219,6 +219,22 @@ export class WebSocketTokenServer extends WebSocketServer {
     });
   }
 
+  broadcastRoom(roomName: string, command: string, payload: any) {
+    const cmd = JSON.stringify({ command, payload });
+    const room = this.rooms[roomName];
+
+    if (!room) {
+      return;
+    }
+
+    room.forEach((connectionId) => {
+      const connection = this.connections[connectionId];
+      if (connection) {
+        connection.socket.send(cmd);
+      }
+    });
+  }
+
   registerCommand(command: string, callback: SocketMiddleware, ...middlewares: SocketMiddleware[]): void {
     this.commands[command] = callback;
     this.addMiddlewareToCommand(command, ...middlewares);
