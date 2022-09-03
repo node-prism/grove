@@ -24,12 +24,11 @@ import { PrismApp } from "../../shared/definitions";
  * - .build/socket/jobs/start-job.js `middleware` export (Function[]), if any
  */
 async function getSocketMiddleware(module: SocketModuleExports, filename: string): Promise<SocketMiddleware[]> {
-  let middleware = await loadMiddleware<SocketMiddleware>(path.dirname(filename), filename);
+  const middleware = await loadMiddleware<SocketMiddleware>(path.dirname(filename), filename);
   let moduleMiddleware = module?.middleware;
   if (!moduleMiddleware) moduleMiddleware = [];
   if (!Array.isArray(moduleMiddleware)) moduleMiddleware = [moduleMiddleware];
-  middleware = middleware.concat(moduleMiddleware);
-  return middleware;
+  return middleware.concat(moduleMiddleware);
 }
 
 /**
@@ -85,6 +84,5 @@ export async function createSocketHandlers(app: PrismApp) {
 }
 
 function parentDirname(filename: string): string {
-  const directory = path.dirname(filename).normalize();
-  return directory;
+  return path.dirname(filename).normalize();
 }

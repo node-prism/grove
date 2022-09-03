@@ -78,13 +78,14 @@ export class Connection extends EventEmitter {
     this.ping = new Ping();
 
     this.latency.interval = setInterval(() => {
-      if (this.alive) {
-        if (typeof this.latency.ms === "number") {
-          this.send({ command: "prism:latency", payload: this.latency.ms });
-        }
-        this.latency.request();
-        this.send({ command: "prism:latency:request", payload: {} });
+      if (!this.alive) {
+        return;
       }
+      if (typeof this.latency.ms === "number") {
+        this.send({ command: "prism:latency", payload: this.latency.ms });
+      }
+      this.latency.request();
+      this.send({ command: "prism:latency:request", payload: {} });
     }, 5000);
 
     this.ping.interval = setInterval(() => {
@@ -93,7 +94,7 @@ export class Connection extends EventEmitter {
       }
       this.alive = false;
       this.send({ command: "prism:ping", payload: {} });
-    }, 30000);
+    }, 30_000);
   }
 
   stopIntervals() {
@@ -282,7 +283,7 @@ export class WebSocketTokenServer extends WebSocketServer {
           await mw(c);
         }
       }
-      if (this.middlewares[command] && this.middlewares[command].length) {
+      if (this.middlewares[command]?.length) {
         for (const mw of this.middlewares[command]) {
           await mw(c);
         }

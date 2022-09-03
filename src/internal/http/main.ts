@@ -16,8 +16,8 @@ import loadMiddleware from "../../internal/loader/middleware";
 import ExpressContext from "./context";
 import { PrismApp } from "../../shared/definitions";
 
-function getRelevantRoute(route: string, req: Request) {
-  let ret = {
+function getRequestContext(route: string, req: Request) {
+  const ret = {
     path: {},
     query: {},
     body: {},
@@ -47,12 +47,17 @@ function getRelevantRoute(route: string, req: Request) {
   return ret;
 }
 
-function wrapHandler(handler: Function, route: string) {
-  const wrapped = async (req: Request, res: Response, next: NextFunction) => {
-    const rel = getRelevantRoute(route, req);
+/**
+ * @param handler - the handler to wrap
+ * @param route - the route the handler is for
+ * @returns a function that will call the handler with ExpressContext and relevant route data
+ */
+function getWrappedHandler(handler: Function, route: string) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const rel = getRequestContext(route, req);
     const context = new ExpressContext(req, res, next);
     const runner = async () => {
-      let params: any[] = [context, rel];
+      const params: any[] = [context, rel];
       let ret = handler(...params);
 
       if (isPromise(ret)) {
@@ -69,8 +74,6 @@ function wrapHandler(handler: Function, route: string) {
       return next(e);
     }
   };
-
-  return wrapped;
 }
 
 function createRouteHandlers(
@@ -82,7 +85,7 @@ function createRouteHandlers(
   logger({ level: LogLevel.DEBUG, scope: "http" }, route);
 
   if (module.default && typeof module.default === "function") {
-    app.app.all(route, ...middleware, wrapHandler(module.default, route));
+    app.app.all(route, ...middleware, getWrappedHandler(module.default, route));
     logger(
       { level: LogLevel.DEBUG, scope: "http" },
       `${route} | method: any -> export default`
@@ -90,30 +93,32 @@ function createRouteHandlers(
   }
 
   ["get", "put", "post", "patch", "del", "options"].forEach((method) => {
-    if (module[method] && typeof module[method] === "function") {
-      // Append per-method middleware to the end of the middleware list.
-      let methodMiddleware = module?.middleware?.[method] || [];
-      if (methodMiddleware && !Array.isArray(methodMiddleware))
-        methodMiddleware = [methodMiddleware];
-      if (methodMiddleware.length)
-        methodMiddleware = wrapMiddlewareWithHTTPContext(
-          route,
-          methodMiddleware
-        );
+    if (!(module[method] && typeof module[method] === "function")) {
+      return;
+    }
 
-      app.app[method === "del" ? "delete" : method](
-        route,
-        [...middleware, ...methodMiddleware],
-        wrapHandler(module[method], route)
-      );
+    // Append per-method middleware to the end of the middleware list.
+    let methodMiddleware = module?.middleware?.[method] || [];
+    if (methodMiddleware && !Array.isArray(methodMiddleware))
+    methodMiddleware = [methodMiddleware];
+    if (methodMiddleware.length)
+    methodMiddleware = wrapMiddlewareWithHTTPContext(
+      route,
+      methodMiddleware
+    );
 
-      logger(
-        { level: LogLevel.DEBUG, scope: "http" },
-        `${route} | method: ${
+    app.app[method === "del" ? "delete" : method](
+      route,
+      [...middleware, ...methodMiddleware],
+      getWrappedHandler(module[method], route)
+    );
+
+    logger(
+      { level: LogLevel.DEBUG, scope: "http" },
+      `${route} | method: ${
           method === "del" ? "DELETE" : method.toUpperCase()
         } -> export "${module[method].name}"`
-      );
-    }
+    );
   });
 }
 
@@ -204,11 +209,11 @@ function wrapMiddlewareWithHTTPContext(route: string, middleware: Function[]) {
   return middleware.map((fn) => {
     function handler(req: Request, res: Response, next: NextFunction) {
       const ec = new ExpressContext(req, res, next);
-      const relevant = getRelevantRoute(route, req);
+      const relevant = getRequestContext(route, req);
       try {
         fn(ec, relevant);
       } catch (e) {
-        console.log("middleware wrapper handler caught error", e);
+        console.error("middleware wrapper handler caught error", e);
       }
       return;
     }

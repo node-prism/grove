@@ -20,13 +20,13 @@ interface QueueConfig {
   delay?: string | number;
   /** Number of simultaneous async workers. */
   concurrency?: number;
-  /** A task will fail after timeout ms. */
+  /** Once started, a queue task will fail after timeout ms. */
   timeout?: string | number;
 
   /**
    * groups are used to scope this queue to a specific key.
    *
-   * @example:
+   * @example
    * mailQueue.group(recipient.address).push(sendEmail);
    *
    * The options (delay, concurrency, timeout) are inherited from the queue
@@ -36,7 +36,10 @@ interface QueueConfig {
     delay: string | number;
     concurrency: number;
     timeout?: string | number;
-    /** The period of inactivity duration that, when reached, partitions will destroy themselves. */
+    /**
+     * The period of inactivity duration that, when reached, partitions will destroy themselves.
+     * Accepts a {@link duration}.
+     * */
     expiration?: string | number;
   }
 }
@@ -142,7 +145,7 @@ export default class Queue<Payload> extends EventEmitter {
   }
 
   cycle() {
-    this.inflight -= 1;
+    this.inflight--;
     this.processTasks();
   }
 
@@ -177,12 +180,12 @@ export default class Queue<Payload> extends EventEmitter {
 
     assert(priorityIndex >= 0, `expected the queue to contain entries since the queue size is ${this.size}.`);
 
-    this.inflight += 1;
+    this.inflight++;
 
     // Pick a task from a FIFO queue
     const nextTask = this.bucketQueue[priorityIndex].shift();
 
-    this.size -= 1;
+    this.size--;
 
     assert(nextTask, "expected the item list to contain an entry since findIndex() returned != -1.");
 
@@ -196,7 +199,7 @@ export default class Queue<Payload> extends EventEmitter {
       try {
         await Promise.race([this.createTimeoutPromise(uuid), this.executor(payload)]);
 
-        callback && callback({ uuid, payload });
+        callback?.({ uuid, payload });
 
         this.emitter.emit("complete", { task: { uuid, payload } });
         clearTimeout(this.timeouts[uuid]);
@@ -207,7 +210,7 @@ export default class Queue<Payload> extends EventEmitter {
       try {
         await this.executor(payload);
 
-        callback && callback({ uuid, payload });
+        callback?.({ uuid, payload });
 
         this.emitter.emit("complete", { task: { uuid, payload } });
       } catch (err) {
@@ -249,7 +252,7 @@ export default class Queue<Payload> extends EventEmitter {
     const task: QueueTask = { uuid: getUuid(), payload, callback };
 
     this.bucketQueue[priority].push(task);
-    this.size += 1;
+    this.size++;
     this.emitter.emit("new", { task });
 
     return task.uuid;

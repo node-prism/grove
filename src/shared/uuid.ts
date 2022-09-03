@@ -12,10 +12,10 @@ for (let i = 0; i < 256; i++) {
 const rand = Math.random.bind(Math);
 
 export function getUuid(): string {
-  const d0 = (rand() * 0x100000000) >>> 0;
-  const d1 = (rand() * 0x100000000) >>> 0;
-  const d2 = (rand() * 0x100000000) >>> 0;
-  const d3 = (rand() * 0x100000000) >>> 0;
+  const d0 = (rand() * 0x1_00_00_00_00) >>> 0;
+  const d1 = (rand() * 0x1_00_00_00_00) >>> 0;
+  const d2 = (rand() * 0x1_00_00_00_00) >>> 0;
+  const d3 = (rand() * 0x1_00_00_00_00) >>> 0;
 
   return (
     lookupTable[d0 & 0xff] +

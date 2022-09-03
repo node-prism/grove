@@ -78,13 +78,13 @@ export default Respond;
 
 function createPaginatedResponder() {
   const status = 200;
-  return function(context: Context, data: any) {
+  return (context: Context, data: any) => {
     context.res.status(status);
   }
 }
 
 function createSuccessResponder(status: Status) {
-  return function(context: Context, data?: any): ISuccessResponse {
+  return (context: Context, data?: any): ISuccessResponse => {
     context.res.status(status);
 
     context.res.json({ code: status, data });
@@ -94,19 +94,12 @@ function createSuccessResponder(status: Status) {
 }
 
 function createErrorResponder(status: Status) {
-  return function(context: Context, error?: any): IErrorResponse {
+  return (context: Context, error?: any): IErrorResponse => {
     context.res.status(status);
 
-    if (error) {
-      if (isNativeError(error)) {
-        error = error.message;
-      }
-      // else if (error !== null && typeof error === "object") {
-      //   error = JSON.stringify(error);
-      // }
+    if (error && isNativeError(error)) {
+      error = error.message;
     }
-
-    // error = error?.toString();
 
     context.res.json({ code: status, error });
 

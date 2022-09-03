@@ -27,16 +27,16 @@ const colors: { [level: number]: ChalkInstance } = {
 
 export default function ({ level, scope = undefined }: { level: LogLevel, scope?: string }, ...parts: any[]) {
   const loglevel = process.env.LOGLEVEL ?? LogLevel.ERROR;
-  if (level <= loglevel) {
-    const levelName = colors[level](getKeyByValue(levels, level));
-    const d = new Date();
-    const dt = chalk.cyan(`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`);
-    const msg = parts.join(" ");
-    let out = `[${dt}][${levelName}]`;
-    if (scope) {
-      out += `[${chalk.yellow(scope)}]`;
-    }
-    out += ` ${msg}`
-    console.log(out);
+  if (level > loglevel) return;
+
+  const levelName = colors[level](getKeyByValue(levels, level));
+  const d = new Date();
+  const dt = chalk.cyan(`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`);
+  const msg = parts.join(" ");
+  let out = `[${dt}][${levelName}]`;
+  if (scope) {
+    out += `[${chalk.yellow(scope)}]`;
   }
+  out += ` ${msg}`
+  console.log(out);
 }

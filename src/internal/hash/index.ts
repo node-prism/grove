@@ -11,9 +11,9 @@ export class Hasher {
     this.saltLength = saltLength;
   }
 
-  verify(encoded: string, string: string): boolean {
+  verify(encoded: string, unencoded: string): boolean {
     const { algorithm, salt } = this.parse(encoded);
-    const _encoded = this.hash(string, algorithm, salt);
+    const _encoded = this.hash(unencoded, algorithm, salt);
     return _encoded === encoded;
   }
 

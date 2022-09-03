@@ -16,7 +16,6 @@ export interface Command {
     payload: any;
 }
 declare class Latency {
-    checking: boolean;
     start: number;
     end: number;
     ms: number;

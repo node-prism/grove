@@ -92,7 +92,7 @@ const Algorithms: { [k: string]: IAlgorithm } = {
 function createHmac(bits: number): IAlgorithm {
   function sign(encoded: string, secret: string | Buffer): string {
     return crypto
-      .createHmac("sha" + bits, secret)
+      .createHmac(`sha${bits}`, secret)
       .update(encoded)
       .digest("base64");
   }
@@ -111,7 +111,7 @@ function createHmac(bits: number): IAlgorithm {
 function createSign(bits: number): IAlgorithm {
   function sign(encoded: string, secret: string | Buffer): string {
     return crypto
-      .createSign("SHA" + bits)
+      .createSign(`SHA${bits}`)
       .update(encoded)
       .sign(secret.toString(), "base64");
   }
@@ -121,7 +121,7 @@ function createSign(bits: number): IAlgorithm {
     signature: string,
     secret: string | Buffer
   ): boolean {
-    const v = crypto.createVerify("RSA-SHA" + bits);
+    const v = crypto.createVerify(`RSA-SHA${bits}`);
     v.update(encoded);
     return v.verify(secret, signature, "base64");
   }
@@ -132,11 +132,11 @@ function createSign(bits: number): IAlgorithm {
 function createEcdsa(bits: number): IAlgorithm {
   function sign(encoded: string, secret: string | Buffer): string {
     const sig = crypto
-      .createSign("RSA-SHA" + bits)
+      .createSign(`RSA-SHA${bits}`)
       .update(encoded)
       .sign({ key: secret.toString() }, "base64");
 
-    return derToJose(sig, "ES" + bits);
+    return derToJose(sig, `ES${bits}`);
   }
 
   function verify(
@@ -144,8 +144,8 @@ function createEcdsa(bits: number): IAlgorithm {
     signature: string,
     secret: string | Buffer
   ): boolean {
-    signature = joseToDer(signature, "ES" + bits).toString("base64");
-    const v = crypto.createVerify("RSA-SHA" + bits);
+    signature = joseToDer(signature, `ES${bits}`).toString("base64");
+    const v = crypto.createVerify(`RSA-SHA${bits}`);
     v.update(encoded);
     return v.verify(secret, signature, "base64");
   }
@@ -174,7 +174,7 @@ function Base64ToURLEncoded(b64: string): string {
 
 function URLEncodedToBase64(enc: string): string {
   enc = enc.toString();
-  let pad = 4 - (enc.length % 4);
+  const pad = 4 - (enc.length % 4);
 
   if (pad !== 4) {
     for (let i = 0; i < pad; i++) {
@@ -226,7 +226,7 @@ function verify(
   opts: VerifyOptions = {}
 ): VerifyResult {
   const decoded = decode(encoded);
-  const payload = decoded.payload;
+  const { payload } = decoded;
   const parts = encoded.split(".");
   const alg = opts.alg ?? decoded.header.alg;
   const now = Date.now();

@@ -17,10 +17,10 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-const _WEEK_IN_MS = 604800000;
-const _DAY_IN_MS = 86400000;
-const _HOUR_IN_MS = 3600000;
-const _MINUTE_IN_MS = 60000;
+const _WEEK_IN_MS = 604_800_000;
+const _DAY_IN_MS = 86_400_000;
+const _HOUR_IN_MS = 3_600_000;
+const _MINUTE_IN_MS = 60_000;
 const _SECOND_IN_MS = 1000;
 
 const _unitMap = {
@@ -203,13 +203,13 @@ function _isValid(object: any) {
  */
 function duration (duration: any, defaultOrOptions?: any, options?: any): number {
   // process options --------------------------------------------------------------------------------------------------*
-  options = options || (defaultOrOptions && typeof defaultOrOptions === "object" ? defaultOrOptions : {});
+  options ||= defaultOrOptions && typeof defaultOrOptions === "object" ? defaultOrOptions : {};
   const defaultDuration = _isValid(defaultOrOptions) ? defaultOrOptions : 0;
   const unit = typeof options.unit === "string" ? options.unit.toLowerCase() : "ms";
   const round = typeof options.round === "boolean" ? options.round : true;
 
   // utilize the cache and return if the cached input exists ----------------------------------------------------------*
-  const input = duration + "" + defaultDuration + "" + unit + "" + round;
+  const input = `${duration}${defaultDuration}${unit}${round}`;
   const cached = input in _resultCache;
 
   if (cached) {
@@ -335,7 +335,7 @@ function createCustom (duration_: any, defaultOrOptions: any, options: any): Fun
     }
 
     // options, when called the customized duration function with
-    opt = opt || (def && typeof def === "object" ? def : {});
+    opt ||= def && typeof def === "object" ? def : {};
 
     // merge the options, default options given upon creating the custom duration function will be override
     // with the options, when called the customized duration function with

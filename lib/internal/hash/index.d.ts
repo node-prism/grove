@@ -3,7 +3,7 @@ export declare class Hasher {
     private algorithm;
     private saltLength;
     constructor(algorithm?: Algorithm, saltLength?: number);
-    verify(encoded: string, string: string): boolean;
+    verify(encoded: string, unencoded: string): boolean;
     encode(string: string): string;
     hash(string: string, algorithm: Algorithm, salt: string): string;
     parse(encoded: string): {
