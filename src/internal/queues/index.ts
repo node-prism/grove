@@ -20,7 +20,7 @@ interface QueueConfig {
   delay?: string | number;
   /** Number of simultaneous async workers. */
   concurrency?: number;
-  /** Once started, a queue task will fail after timeout ms. */
+  /** Once started, a queue task will fail after timeout ms. A value of 0 means the task will never be forcefully timed out. */
   timeout?: string | number;
 
   /**
