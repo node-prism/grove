@@ -1,6 +1,8 @@
 An easily-describable backend framework with a Next.js-like, declarative filesystem-based
 API structure.
 
+An example project can be found at [github.com/node-prism/server-example](https://github.com/node-prism/server-example).
+
 # Installation
 
 ```bash
