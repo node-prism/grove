@@ -198,7 +198,8 @@ Let's assume we have the following endpoints:
 /user/profile/edit (/src/app/http/user/profile/edit.ts)
 ```
 
-To create middleware that is applied to *all* of these endpoints, create
+To create middleware that is applied to *all* of these endpoints (i.e. `
+/user/*`), create
 a file named `_middleware.ts` and place it at `/src/app/http/user/_middleware.ts`.
 
 A `_middleware.ts` file is expected to have a default export which is an array of
@@ -215,7 +216,7 @@ export default [
 ];
 ```
 
-You can also export a `middleware` object from the handler file, where the object keys
+Another way to define middleware is to export a `middleware` object from a handler file, where the object keys
 are the request method that the middleware will be applied to.
 
 ```typescript
@@ -278,12 +279,11 @@ export default [
 
 # Schedules
 
-Schedules found in `/src/app/schedules` are automatically ingested and created. These are
-expected to have an async default export which is assumed to be the handler for the
-scheduled task.
+Place your schedule definitions in `/src/app/schedules`.
 
-Here's an example of a simple schedule that would collect daily user metrics from
-a database and email them via the mail queue.
+These are expected to export default an async function, which is the handler for the scheduled task.
+
+Here's an example of a simple schedule that would collect daily user metrics from a database and deliver them via a task placed in a mail queue.
 
 ```typescript
 // /src/app/schedules/metrics.ts
@@ -291,22 +291,24 @@ a database and email them via the mail queue.
 import { Schedule } from "@prsm/grove/schedules";
 import { queue as mailQueue } from "../queues/mail";
 
+// The task to be executed according to the schedule below.
 export default async function() {
-  const metrics = "";
-  mailQueue.push({ recipient: "all@us.io", body: metrics });
+  mailQueue.push({ recipient: "all@us.io", body: "" });
 }
 
 export const config: Schedule = {
   cron: "0 0 12 * *",
-  scheduled: true,
   timezone: "America/Los_Angeles",
 }
 ```
 
 # Queues
 
-Place your queue definitions in `/queues`. Your default export should be async
-and is the handler for jobs.
+Place your queue definitions in `/queues`.
+
+Each queue module is expected to export default an async function, which is the handler for each queued job. A `queue` object must also be exported which creates and configures the queue.
+
+Here's an example queue definition.
 
 ```typescript
 // /src/app/queues/mail.ts
@@ -318,32 +320,49 @@ interface MailPayload {
   body: string;
 }
 
+// The task to be executed for each queued job when a worker becomes available.
 export default async function ({ recipient, subject, body }: MailPayload) {
   // send an email
 }
 
 export const queue = new Queue<MailPayload>({
+  // Number of concurrent queue workers.
   concurrency: 1,
+
+  // When a worker becomes free, it will wait `delay` ms before processing the next job.
   delay: 0,
-  /**
-   * If a timeout is defined, the queue emits a "taskfailed" event with the
-   * uuid of the task and the payload it had received when it was created.
-   *
-   * mailQueue.group(recipient).on("tasktimeout", () => {});
-   */
+
+  // Once started, a task will fail if it does not resolve within `timeout` ms.
   timeout: 0,
 
+  // Groups allow for scoped queues based on a key, e.g. a recipient address.
+  // We may, for example, want to limit the number of emails we send to a given
+  // recipient in a given time period.
+  //
+  // By default, a group will inherit the queue's config above, but you can
+  // override that config here.
   groups: {
-    concurrency: 1,
-    delay: 0,
-    /** After a period of inactivity, this group will destroy itself. */
-    expiration: "1 min 5s",
+    concurrency: 3,
+    delay: "5s",
+    timeout: "1m"
   },
 });
 ```
 
-`push` returns the uuid of the created task. Listen for task completion or failure
-by listening to the `failed` and `completed` events.
+## Adding jobs to a queue
+
+Import your queue and call `queue.push` to add a job to the queue.
+
+```typescript
+import { queue as mailQueue } from "../queues/mail";
+mailQueue.push({ recipient, subject, body });
+```
+
+You can monitor task status by listening to the events emitted by the queue. The queue will emit events when:
+
+1. A job is added to the queue
+2. A job is completed
+3. A job fails
 
 ```typescript
 // /src/app/http/mail/index.ts
@@ -357,6 +376,7 @@ mailQueue.on("new", onNew);
 mailQueue.on("failed", onFailed);
 mailQueue.on("complete", onComplete);
 
+// POST /mail
 export async function post(c: Context, { body: { recipient, subject, body } }) {
   const uuid = mailQueue.push({ recipient, subject, body });
   return Respond.OK(c, { uuid });
@@ -386,37 +406,38 @@ For example:
 wscat -c ws://localhost:3000/ -x '{"command": "/jobs/send-email", "payload": { "recipient": "somebody@gmail.com" }}'
 ```
 
-The default export of a command file is the command handler and should
-be async. The handler's return value will be sent to the client. A handler might
-look something like this:
+As usual, a socket command module is expected to export default an async function which is the handler for that command. The return value of the handler will be sent back to the client.
+
+Here's what the above `/src/app/socket/jobs/send-email.ts` module might look like:
 
 ```typescript
 // /src/app/socket/jobs/send-email.ts
-
 import { MailQueueTask, queue as mailQueue } from "../../queues/email";
 
 export default async function(c: Context) {
   const mail: MailQueueTask = {
     recipient: c.payload.recipient,
-    subject: "Hello",
-    body: "...",
+    subject: c.payload.subject,
+    body: c.payload.body,
   };
 
-  // When the queued job finishes, notify the socket client that initiated the job.
+  // Queued tasks optionally accept a callback. In this case, we pass a callback to the
+  // task so that when the task finishes, we can send a completion message back to the
+  // client that initiated the task.
   const callback = () => {
-    c.connection.send({ command: "job:status", payload: { message: "Job finished." } });
+    c.connection.send({ command: "job:status", payload: { status: "finished" } });
   };
 
   const uuid = mailQueue.group(mail.recipient).push(mail, { callback });
 
-  return { message: "Job created.", uuid };
+  return { message: "Task created.", uuid };
 }
 ```
 
 ## Socket middleware
 
-Socket middlewares are very similar to HTTP middlewares. They are not Express middlewares though,
-so they don't need to call `next` or return anything.
+Socket middlewares are very similar to HTTP middlewares.
+They are not Express middlewares, though, so they don't need to call `next` or return anything.
 
 ```typescript
 // /src/app/socket/jobs/_middleware.ts
