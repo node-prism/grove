@@ -6,12 +6,12 @@ interface QueueConfig {
     delay?: string | number;
     /** Number of simultaneous async workers. */
     concurrency?: number;
-    /** A task will fail after timeout ms. */
+    /** Once started, a queue task will fail after timeout ms. A value of 0 means the task will never be forcefully timed out. */
     timeout?: string | number;
     /**
      * groups are used to scope this queue to a specific key.
      *
-     * @example:
+     * @example
      * mailQueue.group(recipient.address).push(sendEmail);
      *
      * The options (delay, concurrency, timeout) are inherited from the queue
@@ -21,7 +21,10 @@ interface QueueConfig {
         delay: string | number;
         concurrency: number;
         timeout?: string | number;
-        /** The period of inactivity duration that, when reached, partitions will destroy themselves. */
+        /**
+         * The period of inactivity duration that, when reached, partitions will destroy themselves.
+         * Accepts a {@link duration}.
+         * */
         expiration?: string | number;
     };
 }

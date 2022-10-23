@@ -69,6 +69,7 @@ export declare class WebSocketTokenServer extends WebSocketServer {
      * Use cases: auth changes, push notifications.
      */
     broadcastRemoteAddress(c: Connection, command: string, payload: any): void;
+    broadcastRoom(roomName: string, command: string, payload: any): void;
     registerCommand(command: string, callback: SocketMiddleware, ...middlewares: SocketMiddleware[]): void;
     addMiddlewareToCommand(command: string, ...middlewares: SocketMiddleware[]): void;
     /**

@@ -6,11 +6,7 @@ export declare class Hasher {
     verify(encoded: string, unencoded: string): boolean;
     encode(string: string): string;
     hash(string: string, algorithm: Algorithm, salt: string): string;
-    parse(encoded: string): {
-        algorithm: Algorithm;
-        salt: string;
-        digest: string;
-    };
+    private parse;
 }
 export declare const hash: Hasher;
 export {};
