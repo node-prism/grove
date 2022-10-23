@@ -33,7 +33,7 @@ export class Hasher {
     return `${algorithm}:${salt}:${digest}`;
   }
 
-  parse(encoded: string): { algorithm: Algorithm, salt: string, digest: string } {
+  private parse(encoded: string): { algorithm: Algorithm, salt: string, digest: string } {
     const parts = encoded.split(":");
 
     if (parts.length !== 3) {
