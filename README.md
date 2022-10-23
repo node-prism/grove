@@ -78,7 +78,6 @@ Place your HTTP route handlers under `/src/app/http`, for example:
 
 ```typescript
 // /src/app/http/user.ts OR /src/app/http/user/index.ts
-
 export async function get(c: Context) {}   // GET /user
 export async function post(c: Context) {}  // POST /user
 export async function put(c: Context) {}   // PUT /user
@@ -90,7 +89,6 @@ Path parameters are supported:
 
 ```typescript
 // /src/app/http/user/[id].ts -> /user/:id
-
 export async function get(c: Context, { path: { id } }) {
   return Respond.OK(c, { id });
 }
@@ -100,7 +98,6 @@ Wildcards are supported:
 
 ```typescript
 // /src/app/http/user/[id]/[...rest].ts -> /user/:id/:rest*
-
 export async function get(c: Context, { path: { id, rest } }) {
   // c.req.params will include whatever other path params exist
   return Respond.OK(c, { id, rest });
@@ -207,7 +204,6 @@ Express-compatible middleware handlers.
 
 ```typescript
 // /src/app/http/user/_middleware.ts
-
 export default [
    async (c: Context) => {
     console.log(c.req.method, c.req.path, c.req.ip);
@@ -221,7 +217,6 @@ are the request method that the middleware will be applied to.
 
 ```typescript
 // /src/app/http/user/profile.ts
-
 export async function get(c: Context) {}
 export async function post(c: Context) {}
 
@@ -253,7 +248,6 @@ For example:
 
 ```typescript
 // /src/app/errors.ts
-
 import { NextFunction, Request, Response } from "express";
 
 export default [
@@ -287,7 +281,6 @@ Here's an example of a simple schedule that would collect daily user metrics fro
 
 ```typescript
 // /src/app/schedules/metrics.ts
-
 import { Schedule } from "@prsm/grove/schedules";
 import { queue as mailQueue } from "../queues/mail";
 
