@@ -1,12 +1,12 @@
 An easily-describable backend framework with a Next.js-like, declarative filesystem-based
 API structure.
 
-An example project can be found at [github.com/node-prism/server-example](https://github.com/node-prism/server-example).
+An example project can be found at [github.com/node-prism/grove-example](https://github.com/node-prism/grove-example).
 
 # Installation
 
 ```bash
-npm i @prsm/server
+npm i @prsm/grove
 ```
 
 # Quickstart
@@ -15,7 +15,7 @@ npm i @prsm/server
 // /src/index.ts
 import express from "express";
 import { createServer } from "http";
-import { createAPI } from "@prism/server";
+import { createAPI } from "@prsm/grove";
 
 // Create an express server.
 const app = express();
@@ -288,7 +288,7 @@ a database and email them via the mail queue.
 ```typescript
 // /src/app/schedules/metrics.ts
 
-import { Schedule } from "@prism/server/schedules";
+import { Schedule } from "@prsm/grove/schedules";
 import { queue as mailQueue } from "../queues/mail";
 
 export default async function() {
@@ -310,7 +310,7 @@ and is the handler for jobs.
 
 ```typescript
 // /src/app/queues/mail.ts
-import Queue from "prism/queues";
+import Queue from "prsm/queues";
 
 interface MailPayload {
   recipient: string;
@@ -420,7 +420,7 @@ so they don't need to call `next` or return anything.
 
 ```typescript
 // /src/app/socket/jobs/_middleware.ts
-import { Context } from "@prism/server/ws";
+import { Context } from "@prsm/grove/ws";
 
 export default [
   (c: Context) => {
