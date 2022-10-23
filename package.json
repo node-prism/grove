@@ -10,6 +10,7 @@
   },
   "exports": {
     ".": "./lib/index.js",
+    "./throttle": "./lib/internal/throttle/index.js",
     "./cache": "./lib/internal/cache/index.js",
     "./hash": "./lib/internal/hash/index.js",
     "./http": "./lib/internal/http/index.js",
@@ -24,6 +25,9 @@
   },
   "typesVersions": {
     "*": {
+      "throttle": [
+        "lib/internal/throttle/index.d.ts"
+      ],
       "cache": [
         "lib/internal/cache/index.d.ts"
       ],
