@@ -1,6 +1,6 @@
 import { Context } from "../http";
 export default function throttle(c: Context, options?: {
-    /** Throttle by IP to any endpoint. */
+    /** Throttle by IP. */
     byIp?: boolean;
     /** Throttle by IP, method and request path. */
     byPath?: boolean;
