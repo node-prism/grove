@@ -26,9 +26,8 @@ export default function throttle(
     track_byPath[c.req.ip + c.req.method + c.req.path] + 1 || 1;
 
   setTimeout(() => {
-    track_byIp[c.req.ip] = track_byIp[c.req.ip] - 1;
-    track_byPath[c.req.ip + c.req.method + c.req.path] =
-      track_byPath[c.req.ip + c.req.method + c.req.path] - 1;
+    track_byIp[c.req.ip]--;
+    track_byPath[c.req.ip + c.req.method + c.req.path]--;
 
     if (track_byIp[c.req.ip] === 0) {
       delete track_byIp[c.req.ip];
