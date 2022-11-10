@@ -61,6 +61,7 @@ const bucket = new CacheMap(1);
  * the cache entry is invalidated.
  */
 export default function useCache<T>(callback: (...callbackInputs: any) => T, inputs: Array<any>, death: string | number): T {
+  if (!Array.isArray(inputs)) inputs = [inputs];
   const key = inputs.reduce(stringify, "");
   const entry = bucket.get(key);
   const now = Date.now();
