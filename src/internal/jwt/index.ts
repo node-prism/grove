@@ -48,13 +48,21 @@ export interface VerifyOptions {
 }
 
 export interface VerifyResult {
+  /** true: signature is valid */
   sig?: boolean;
+  /** true: payload.iat matches opts.iat */
   iat?: boolean;
+  /** true: the current time is later or equal to payload.nbf, false: this jwt should NOT be accepted */
   nbf?: boolean;
+  /** true: token is expired (payload.exp < now) */
   exp?: boolean;
+  /** true: payload.jti matches opts.jti */
   jti?: boolean;
+  /** true: payload.iss matches opts.iss */
   iss?: boolean;
+  /** true: payload.sub matches opts.sub */
   sub?: boolean;
+  /** true: payload.aud matches opts.aud */
   aud?: boolean;
 
   decoded: JWTToken;
@@ -246,7 +254,7 @@ function verify(
   }
 
   if (payload.nbf !== undefined) {
-    result.nbf = payload.nbf <= now;
+    result.nbf = now >= payload.nbf;
   }
 
   if (opts.iat !== undefined) {
