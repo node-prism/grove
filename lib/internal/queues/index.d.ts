@@ -36,7 +36,11 @@ export default class Queue<Payload> extends EventEmitter {
     readonly timeout_ms: number;
     readonly concurrency: number;
     readonly emitter: EventEmitter;
-    readonly bucketQueue: any[];
+    readonly bucketQueue: Array<Array<{
+        uuid: string;
+        payload: any;
+        callback?: Function;
+    }>>;
     /** Number of tasks currently being executed. */
     private inflight;
     /** Number of tasks currently in the queue and awaiting completion. */
