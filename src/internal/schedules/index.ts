@@ -6,7 +6,7 @@ import { invariant } from "../../shared/utils";
 import loadModule from "../../internal/loader/main";
 import { PrismApp } from "../../shared/definitions";
 
-export { CRON } from "./common";
+export { CronInterval } from "./common";
 
 export interface Schedule {
   /** A cron expression. */

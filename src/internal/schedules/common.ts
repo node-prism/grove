@@ -1,4 +1,4 @@
-export const CRON = {
+export const CronInterval = {
   DAILY: {
     MIDNIGHT: "0 0 * * *",
     NOON: "0 0 12 * *",

@@ -1,5 +1,5 @@
 import { PrismApp } from "../../shared/definitions";
-export { CRON } from "./common";
+export { CronInterval } from "./common";
 export interface Schedule {
     /** A cron expression. */
     cron: string;

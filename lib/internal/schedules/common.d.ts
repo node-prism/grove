@@ -1,4 +1,4 @@
-export declare const CRON: {
+export declare const CronInterval: {
     DAILY: {
         MIDNIGHT: string;
         NOON: string;
