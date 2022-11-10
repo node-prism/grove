@@ -25,7 +25,7 @@ export interface JWTHeader {
     /** key id */
     kid?: string;
 }
-export interface JWTToken {
+export interface JWTParts {
     header: JWTHeader;
     payload: JWTPayload;
     signature: Buffer;
@@ -58,11 +58,11 @@ export interface VerifyResult {
     sub?: boolean;
     /** true: payload.aud matches opts.aud */
     aud?: boolean;
-    decoded: JWTToken;
+    decoded: JWTParts;
 }
 declare const algorithms: readonly ["HS256", "HS384", "HS512", "RS256", "RS384", "RS512"];
 declare type Algorithm = typeof algorithms[number];
 declare function encode(payload: JWTPayload, key: string | Buffer, alg?: Algorithm): string;
-declare function decode(encoded: string): JWTToken;
+declare function decode(encoded: string): JWTParts;
 declare function verify(encoded: string, key: string | Buffer, opts?: VerifyOptions): VerifyResult;
 export { encode, decode, verify, };

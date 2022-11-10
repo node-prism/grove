@@ -29,7 +29,7 @@ export interface JWTHeader {
   kid?: string;
 }
 
-export interface JWTToken {
+export interface JWTParts {
   header: JWTHeader;
   payload: JWTPayload;
   signature: Buffer;
@@ -65,7 +65,7 @@ export interface VerifyResult {
   /** true: payload.aud matches opts.aud */
   aud?: boolean;
 
-  decoded: JWTToken;
+  decoded: JWTParts;
 }
 
 const algorithms = [
@@ -213,7 +213,7 @@ function encode(
   return `${unsigned}.${sig}`;
 }
 
-function decode(encoded: string): JWTToken {
+function decode(encoded: string): JWTParts {
   const parts = encoded.split(".");
   if (parts.length !== 3) {
     throw new Error(
