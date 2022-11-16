@@ -104,8 +104,8 @@ export async function get(c: Context, { path: { id, rest } }) {
 }
 ```
 
-Handlers are wrapped in order to automatically handle Promise rejections
-or thrown errors by passing them to the registered Express error middlewares.
+Handlers are wrapped in order to catch what would otherwise be an uncaught Promise rejection
+or thrown error by passing it to whatever Express error middlewares have been defined.
 
 ```typescript
 function throws() {
@@ -122,67 +122,19 @@ The result of the above is that the error is caught and passed to the first midd
 defined in `/src/app/errors.ts`, if it exists.
 
 This means that you don't need to wrap error-prone code within a try/catch and
-forward errors to your error-handling middleware with `next(e)`, as this happens
+forward errors to your error-handling middleware with, e.g., `next(e)`, as this happens
 automatically for you.
 
 ```typescript
 const prism = await createAPI("app", app, server);
 
 // Assuming `/src/app/errors.ts` doesn't exist and this is the first error handling
-// middleware that is defined, the above thrown error would be handled by this.
+// middleware that is defined, the above thrown error would be handled by the following
+// middleware:
 
 prism.app.use((err, req, res, next) => {
   res.status(500).send("Something went horribly wrong!");
 });
-```
-
-## Flattened paths
-
-You can "flatten" parts of a route path by prefixing corresponding filesystem folders with an underscore. In other words,
-
-```bash
-/src/app/http/user/_authorized/profile.ts
-```
-
-...is mounted at `/user/profile` because the `_authorized` folder is effectively ignored (i.e., flattened).
-
-Middlewares defined inside of flattened folders are still recognized and applied to sibling and child files.
-This can be a very useful pattern.
-
-Consider the following folder structure:
-
-```bash
-├── app
-│   ├── http
-│   │   └── user
-│   │       ├── index.ts
-│   │       └── _authorized
-│   │           ├── _middleware.ts # some authorization middleware
-│   │           └── profile.ts
-└── index.ts
-```
-
-The result of the above is that handlers at `/user` are not behind authorization middleware whereas
-handlers at `/user/profile` are.
-
-
-## Reading the request body / query / path / headers
-
-Both route handlers and middlewares are passed an object of the following shape:
-
-```typescript
-{
-  path: {}, // Path params (/user/:id -> { path: { id } })
-  query: {}, // Query params (/user/123?action=edit -> { query: { action: "edit" } })
-  body: {}, // POST body
-  headers: {}, // Request headers
-  bearer: "", // Bearer token, if present in Authorization header
-}
-
-// usage:
-export async function post(c: Context, { body: { email, password } }) {}
-export async function get(c: Context, { query: { action }, path: { id }}) {}
-export async function get(c: Context, { bearer }) {}
 ```
 
 ## Middleware
@@ -213,7 +165,7 @@ export default [
 ```
 
 Another way to define middleware is to export a `middleware` object from a handler file, where the object keys
-are the request method that the middleware will be applied to.
+are the request method that the middleware will be applied to, and the value is an array of middlewares.
 
 ```typescript
 // /src/app/http/user/profile.ts
@@ -270,6 +222,56 @@ export default [
   },
 ];
 ```
+
+## Flattened paths
+
+You can "flatten" parts of a route path by prefixing corresponding filesystem folders with an underscore. In other words,
+
+```bash
+/src/app/http/user/_authorized/profile.ts
+```
+
+...is mounted at `/user/profile` because the `_authorized` folder is effectively ignored (i.e., flattened).
+
+Middlewares defined inside of flattened folders are still recognized and applied to sibling and child files.
+This can be a very useful pattern.
+
+Consider the following folder structure:
+
+```bash
+├── app
+│   ├── http
+│   │   └── user
+│   │       ├── index.ts
+│   │       └── _authorized
+│   │           ├── _middleware.ts # some authorization middleware
+│   │           └── profile.ts
+└── index.ts
+```
+
+The result of the above is that handlers at `/user` are not behind authorization middleware whereas
+handlers at `/user/profile` are.
+
+
+## Reading the request body / query / path / headers
+
+Both route handlers and middlewares are passed an object of the following shape:
+
+```typescript
+{
+  path: {}, // Path params (/user/:id -> { path: { id } })
+  query: {}, // Query params (/user/123?action=edit -> { query: { action: "edit" } })
+  body: {}, // POST body
+  headers: {}, // Request headers
+  bearer: "", // Bearer token, if present in Authorization header
+}
+
+// sample usage:
+export async function post(c: Context, { body: { email, password } }) {}
+export async function get(c: Context, { query: { action }, path: { id }}) {}
+export async function get(c: Context, { bearer }) {}
+```
+
 
 # Schedules
 
