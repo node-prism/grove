@@ -5,6 +5,7 @@ function getKeyByValue(object: object, value: any) {
 }
 
 export enum LogLevel {
+  SILENT = 0,
   INFO = 1,
   WARN = 2,
   ERROR = 3,
@@ -26,8 +27,8 @@ const colors: { [level: number]: ChalkInstance } = {
 };
 
 export default function ({ level, scope = undefined }: { level: LogLevel, scope?: string }, ...parts: any[]) {
-  const loglevel = process.env.LOGLEVEL ?? LogLevel.ERROR;
-  if (level > loglevel) return;
+  const loglevel = Number(process.env.LOGLEVEL ?? LogLevel.ERROR);
+  if (level > loglevel || loglevel === LogLevel.SILENT) return;
 
   const levelName = colors[level](getKeyByValue(levels, level));
   const d = new Date();
