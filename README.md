@@ -1,7 +1,59 @@
-An easily-describable backend framework with a Next.js-like, declarative filesystem-based
-API structure.
+A backend framework with a Next.js-esque filesystem-based API structure.
 
 An example project can be found at [github.com/node-prism/grove-example](https://github.com/node-prism/grove-example).
+
+# Brief overview
+
+## Handling HTTP requests
+
+```typescript
+// /src/app/http/auth/login.ts:
+import { Context, Respond } from "@prsm/grove/http";
+
+export async function post(c: Context, { body: { email, password }}) {
+  return Respond.OK(c, { ok: "Authorized" });
+}
+
+// POST /auth/login
+// content-type: application/json
+// {
+//   "email": "foo@bar.com",
+//   "password": "password"
+// }
+
+// response: 
+// HTTP/1.1 200 OK
+// {
+//   "code": 200,
+//   "data": {
+//     "ok": "Authorized"
+//   }
+// }
+```
+
+## Handling WebSocket messages
+
+```typescript
+// /src/app/socket/auth/login.ts:
+import { Context } from "@prsm/grove/ws";
+
+export default async function (c: Context) {
+  return { ok: "Authorized" };
+}
+
+// wscat -c ws://localhost:PORT/ -x '{"command": "/auth/login", "payload": {"token": "..."}}'
+// response:
+// {"command":"/auth/login","payload":{"ok":"Authorized"}}
+```
+
+Some additional (and completely optional) features to help you quickly get your project started:
+
+- [queues](https://github.com/node-prism/grove#queues)
+- [scheduled tasks](https://github.com/node-prism/grove#schedules)
+- simple middleware creation for both [http](https://github.com/node-prism/grove#middleware) and [socket endpoints](https://github.com/node-prism/grove#socket-middleware)
+- [a helper for caching requests](https://github.com/node-prism/grove/tree/master/src/internal/cache)
+- [helpers for JWT verification and signing](https://github.com/node-prism/grove/tree/master/src/internal/jwt)
+- [helpers for hasing passwords](https://github.com/node-prism/grove/tree/master/src/internal/hash)
 
 # Installation
 
@@ -62,14 +114,21 @@ The typical folder structure looks something like this:
 
 # .env
 
-For convenience, an `.env` file placed alongside `package.json` is automatically loaded with `dotenv`.
+If an `.env` file is discovered alongside `package.json`, `dotenv` automatically loads and injects the
+environment variables into `process.env`.
 
-This is a good place to set prism's logging verbosity, as well as whatever other application-specific
-environment variables that your application might need at runtime.
+The only grove-specific environment variable is `LOGLEVEL`, which can be one of:
+
+- `4` (debug)
+- `3` (error)
+- `2` (warn)
+- `1` (info)
+- `0` (silent)
 
 ```shell
 # /.env
-LOGLEVEL=4 (4=DEBUG, 3=ERROR, 2=WARN, 1=INFO)
+LOGLEVEL=3
+JWT_SECRET=ninjaturtles
 ```
 
 # HTTP route handlers
