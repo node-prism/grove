@@ -211,7 +211,9 @@ export class WebSocketTokenServer extends WebSocketServer {
    * Given a Connection, broadcasts only to all other Connections that share
    * the same connection.remoteAddress.
    *
-   * Use cases: auth changes, push notifications.
+   * Use cases:
+   *  - Push notifications.
+   *  - Auth changes, e.g., logging out in one tab should log you out in all tabs.
    */
   broadcastRemoteAddress(c: Connection, command: string, payload: any) {
     const cmd = JSON.stringify({ command, payload });
@@ -220,6 +222,13 @@ export class WebSocketTokenServer extends WebSocketServer {
     });
   }
 
+  /**
+   * Given a roomName, a command and a payload, broadcasts to all Connections
+   * that are in the room.
+   * @param roomName
+   * @param command
+   * @param payload
+   */
   broadcastRoom(roomName: string, command: string, payload: any) {
     const cmd = JSON.stringify({ command, payload });
     const room = this.rooms[roomName];
@@ -254,6 +263,11 @@ export class WebSocketTokenServer extends WebSocketServer {
    * server.registerCommand("join:room", async (payload: { roomName: string }, connection: Connection) => {
    *   server.addToRoom(payload.roomName, connection);
    *   server.broadcastRoom(payload.roomName, "joined", { roomName: payload.roomName });
+   * });
+   * 
+   * server.on("connected", (connection: Connection) => {
+   *   server.addToRoom("online", connection);
+   *   console.log("there are", server.getRoom("online").size, "active connections");
    * });
    * ```
    */
