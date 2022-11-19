@@ -285,6 +285,14 @@ export class WebSocketTokenServer extends WebSocketServer {
     this.rooms[roomName] = new Set();
   }
 
+  /**
+   * Returns a "room", which is simply a Set of Connection ids.
+   * @param roomName 
+   */
+  getRoom(roomName: string): Set<string> {
+    return this.rooms[roomName];
+  }
+
   async runCommand(id: number, command: string, payload: any, connection: Connection) {
     const c = new WSContext(this, connection, payload);
 
