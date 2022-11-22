@@ -1,6 +1,6 @@
-import { WSContext } from "./server";
-import { WebSocketTokenServer } from "./server";
-import { Connection } from "./server";
+import { WSContext } from "@prsm/keepalive-ws";
+import { KeepAliveServer } from "@prsm/keepalive-ws/server";
+import { Connection } from "@prsm/keepalive-ws/server";
 export { WSContext as Context };
-export { WebSocketTokenServer };
+export { KeepAliveServer };
 export { Connection };
