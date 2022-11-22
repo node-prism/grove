@@ -1,9 +1,9 @@
+import { KeepAliveServer, SocketMiddleware } from "@prsm/keepalive-ws/server";
 import express from "express";
 import { Server as ServerHTTP, Server as ServerHTTPS } from "http";
 import { WebSocketServer } from "ws";
 import { Context } from "../internal/http";
 import Queue from "../internal/queues";
-import { SocketMiddleware, WebSocketTokenServer } from "../internal/ws/server";
 
 
 type Method = {
@@ -15,7 +15,7 @@ export interface PrismApp {
   app: express.Application;
   server: ServerHTTP | ServerHTTPS;
   root: string;
-  wss: WebSocketServer & WebSocketTokenServer;
+  wss: KeepAliveServer;
 }
 
 export interface HTTPModuleExports {

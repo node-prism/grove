@@ -1,8 +1,8 @@
-# WebSocketTokenServer
+# KeepAliveServer
 
 ## Events
 
-In addition to the events normally emitted by `WebSocketServer`, `WebSocketTokenServer` will emit:
+In addition to the events normally emitted by `WebSocketServer`, `KeepAliveServer` will emit:
 
 | Event name  | Meaning                                                         |
 |-------------|-----------------------------------------------------------------|
@@ -10,12 +10,12 @@ In addition to the events normally emitted by `WebSocketServer`, `WebSocketToken
 
 ## Messages
 
-These messages are sent from `WebSocketTokenServer` to connected clients.
+These messages are sent from `KeepAliveServer` to connected clients.
 
 | Message name    | Meaning                                                                                                                              | Payload                                                 |
 |-----------------|--------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------|
-| `prism:latency` | Sent by default in 5s~ intervals and includes the calculated round-trip time of the last latency request and response trip.          | The calculated round-trip message time in milliseconds. |
-| `prism:ping`    | A ping request. These are automatically replied to by `WebSocketTokenClient` -- there's no need to reply to this message explicitly. | No payload.                                             |
+| `latency` | Sent by default in 5s~ intervals and includes the calculated round-trip time of the last latency request and response trip.          | The calculated round-trip message time in milliseconds. |
+| `ping`    | A ping request. These are automatically replied to by `KeepAliveClient` -- there's no need to reply to this message explicitly. | No payload.                                             |
 
 
 ## Commands
@@ -29,7 +29,7 @@ registerCommand(command: string, callback: SocketMiddleware, ...middlewares: Soc
 ```
 
 ```typescript
-const wsts = new WebSocketTokenServer({ path: "/" });
+const wsts = new KeepAliveServer({ path: "/" });
 
 wsts.registerCommand(
   "auth:login",
@@ -44,10 +44,10 @@ wsts.registerCommand(
 );
 ```
 
-From the client side, use the `WebSocketTokenClient`'s `command` method to run this command and await a reply:
+From the client side, use the `KeepAliveClient`'s `command` method to run this command and await a reply:
 
 ```typescript
-const wstc = new WebSocketTokenClient("wss://localhost:3000");
+const wstc = new KeepAliveClient("wss://localhost:3000");
 
 const reply = await wsts.command("auth:login", { token: "abc" });
 ```
