@@ -45,7 +45,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@prsm/keepalive-ws": "^0.1.6",
+    "@prsm/keepalive-ws": "^0.1.7",
     "@types/ws": "^8.5.3",
     "chalk": "^5.0.0",
     "dotenv": "^16.0.0",
