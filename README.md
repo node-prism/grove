@@ -67,7 +67,7 @@ npm i @prsm/grove
 // /src/index.ts
 import express from "express";
 import { createServer } from "http";
-import { createAPI } from "@prsm/grove";
+import { createApi } from "@prsm/grove";
 
 // Create an express server.
 const app = express();
@@ -77,8 +77,8 @@ const server = createServer(app);
 app.use(express.json());
 
 // Travel the "app" folder, discovering modules and using them to create route handlers.
-const prism = await createApi("app", app, server);
-prism.server.listen(3000);
+const grove = await createApi("app", app, server);
+grove.server.listen(3000);
 ```
 
 The typical folder structure looks something like this:
@@ -185,13 +185,13 @@ forward errors to your error-handling middleware with, e.g., `next(e)`, as this 
 automatically for you.
 
 ```typescript
-const prism = await createAPI("app", app, server);
+const grove = await createAPI("app", app, server);
 
 // Assuming `/src/app/errors.ts` doesn't exist and this is the first error handling
 // middleware that is defined, the above thrown error would be handled by the following
 // middleware:
 
-prism.app.use((err, req, res, next) => {
+grove.app.use((err, req, res, next) => {
   res.status(500).send("Something went horribly wrong!");
 });
 ```
@@ -251,7 +251,7 @@ export const middleware = {
 # Error middleware
 
 You can optionally place an `errors.ts` file at your application's root (e.g. `/app/errors.ts`)
-which will be autodiscovered by prism and applied to Express as middleware. This file is expected
+which will be autodiscovered by grove and applied to Express as middleware. This file is expected
 to have a default export which is an array of Express middleware handlers. These middlewares are
 registered with Express *after* your filesystem-based routes are registered.
 

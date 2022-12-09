@@ -8,7 +8,7 @@ declare type Method = {
     (c: Context): any;
     middleware?: Function;
 };
-export interface PrismApp {
+export interface GroveApp {
     app: express.Application;
     server: ServerHTTP | ServerHTTPS;
     root: string;

@@ -6,7 +6,7 @@ import logger, { LogLevel } from "../../shared/logger";
 import { invariant } from "../../shared/utils";
 import { duration, getUuid, sleep } from "../../shared";
 import loadModule from "../../internal/loader/main";
-import { PrismApp } from "../../shared/definitions";
+import { GroveApp } from "../../shared/definitions";
 
 interface QueueTask {
   uuid: string;
@@ -53,7 +53,7 @@ function validateQueueModuleExports(module: any) {
   }
 }
 
-export async function createQueues(app: PrismApp) {
+export async function createQueues(app: GroveApp) {
   const filenames = await glob(`${app.root}/queues/**/[!_]*.{mjs,js,jsx,ts,tsx}`);
 
   for (const filename of filenames) {

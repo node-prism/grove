@@ -10,15 +10,15 @@ import createSchedules from "./internal/schedules";
 import { createSocketHandlers } from "./internal/ws/main";
 import { KeepAliveServer } from "@prsm/keepalive-ws/server";
 import { LogLevel } from "./shared";
-import { PrismApp } from "./shared/definitions";
+import { GroveApp } from "./shared/definitions";
 import logger from "./shared/logger";
 import selfPath from "./shared/path";
 
-export { PrismApp };
+export { GroveApp };
 
 dotenv.config();
 
-export async function createApi(appRoot: string, app: express.Express, server: ServerHTTP | ServerHTTPS): Promise<PrismApp> {
+export async function createApi(appRoot: string, app: express.Express, server: ServerHTTP | ServerHTTPS): Promise<GroveApp> {
   let api;
 
   try {

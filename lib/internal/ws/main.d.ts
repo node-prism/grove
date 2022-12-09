@@ -1,4 +1,4 @@
-import { PrismApp } from "../../shared/definitions";
+import { GroveApp } from "../../shared/definitions";
 /**
  * The idea here as that a file at /sockets/a/b/c/d.ts
  * will be reachable at ws(s)://localhost/ and it's
@@ -6,4 +6,4 @@ import { PrismApp } from "../../shared/definitions";
  *
  * The module's default export is the command executor.
  */
-export declare function createSocketHandlers(app: PrismApp): Promise<void>;
+export declare function createSocketHandlers(app: GroveApp): Promise<void>;

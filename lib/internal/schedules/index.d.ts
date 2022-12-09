@@ -1,4 +1,4 @@
-import { PrismApp } from "../../shared/definitions";
+import { GroveApp } from "../../shared/definitions";
 export { CronInterval } from "./common";
 export interface Schedule {
     /** A cron expression. */
@@ -8,4 +8,4 @@ export interface Schedule {
     /** A timezone string, e.g. "America/Los_Angeles". */
     timezone: string;
 }
-export default function createSchedules(app: PrismApp): Promise<void>;
+export default function createSchedules(app: GroveApp): Promise<void>;

@@ -7,7 +7,7 @@ import logger, { LogLevel } from "../../shared/logger";
 import { WebSocket } from "ws";
 import loadModule from "../../internal/loader/main";
 import loadMiddleware from "../../internal/loader/middleware";
-import { PrismApp } from "../../shared/definitions";
+import { GroveApp } from "../../shared/definitions";
 import { SocketMiddleware } from "@prsm/keepalive-ws/server";
 
 /**
@@ -38,7 +38,7 @@ async function getSocketMiddleware(module: SocketModuleExports, filename: string
  *
  * The module's default export is the command executor.
  */
-export async function createSocketHandlers(app: PrismApp) {
+export async function createSocketHandlers(app: GroveApp) {
   const p = path.join(app.root, "/socket/");
   const filenames = await glob(`${p}**/[!_]*.{mjs,js,jsx,ts,tsx}`);
 

@@ -14,7 +14,7 @@ import loadModule from "../../internal/loader/main";
 import loadMiddleware from "../../internal/loader/middleware";
 
 import ExpressContext from "./context";
-import { PrismApp } from "../../shared/definitions";
+import { GroveApp } from "../../shared/definitions";
 
 function getRequestContext(route: string, req: Request) {
   const ret = {
@@ -80,7 +80,7 @@ function createRouteHandlers(
   module: HTTPModuleExports,
   middleware: any,
   route: string,
-  app: PrismApp
+  app: GroveApp
 ) {
   logger({ level: LogLevel.DEBUG, scope: "http" }, route);
 
@@ -123,7 +123,7 @@ function createRouteHandlers(
 }
 
 export default async function createHTTPHandlers(
-  app: PrismApp,
+  app: GroveApp,
 ): Promise<RouteDefinition[]> {
   const p = path.join(app.root, "/http/");
   const filenames = await glob(`${p}**/[!_]*.{mjs,js,jsx,ts,tsx}`);

@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import EventEmitter from "node:events";
-import { PrismApp } from "../../shared/definitions";
+import { GroveApp } from "../../shared/definitions";
 interface QueueConfig {
     /** When a worker becomes free, it will wait `delay` before working. */
     delay?: string | number;
@@ -28,7 +28,7 @@ interface QueueConfig {
         expiration?: string | number;
     };
 }
-export declare function createQueues(app: PrismApp): Promise<void>;
+export declare function createQueues(app: GroveApp): Promise<void>;
 export default class Queue<Payload> extends EventEmitter {
     #private;
     readonly config: QueueConfig;

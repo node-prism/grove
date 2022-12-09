@@ -4,7 +4,7 @@ import cron from "node-cron";
 import { ScheduleModuleExports } from "../../shared/definitions";
 import { invariant } from "../../shared/utils";
 import loadModule from "../../internal/loader/main";
-import { PrismApp } from "../../shared/definitions";
+import { GroveApp } from "../../shared/definitions";
 
 export { CronInterval } from "./common";
 
@@ -34,7 +34,7 @@ function validateScheduleModuleExports(module: ScheduleModuleExports, filename: 
   }
 }
 
-export default async function createSchedules(app: PrismApp) {
+export default async function createSchedules(app: GroveApp) {
   const filenames = await glob(`${app.root}/schedules/**/[!_]*.{mjs,js,jsx,ts,tsx}`);
 
   for (const filename of filenames) {
