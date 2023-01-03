@@ -55,7 +55,7 @@ export async function createSocketHandlers(app: GroveApp) {
     const cmd = path.normalize(`${route}/${path.basename(filename, path.extname(filename)).normalize()}`);
     const middleware = await getSocketMiddleware(module, filename);
 
-    app.wss.registerCommand(cmd, module.default, ...middleware);
+    app.wss.registerCommand(cmd, module.default, middleware);
     logger({ level: LogLevel.DEBUG, scope: "ws" }, `command: ${cmd} (wscat -c ws://localhost:PORT/ -x '{"command": "${cmd}", "payload": {}}')`);
   }
 
