@@ -25,15 +25,33 @@
   },
   "typesVersions": {
     "*": {
-      "throttle": ["lib/internal/throttle/index.d.ts"],
-      "cache": ["lib/internal/cache/index.d.ts"],
-      "hash": ["lib/internal/hash/index.d.ts"],
-      "http": ["lib/internal/http/index.d.ts"],
-      "jwt": ["lib/internal/jwt/index.d.ts"],
-      "queues": ["lib/internal/queues/index.d.ts"],
-      "schedules": ["lib/internal/schedules/index.d.ts"],
-      "shared": ["lib/shared/index.d.ts"],
-      "ws": ["lib/internal/ws/index.d.ts"]
+      "throttle": [
+        "lib/internal/throttle/index.d.ts"
+      ],
+      "cache": [
+        "lib/internal/cache/index.d.ts"
+      ],
+      "hash": [
+        "lib/internal/hash/index.d.ts"
+      ],
+      "http": [
+        "lib/internal/http/index.d.ts"
+      ],
+      "jwt": [
+        "lib/internal/jwt/index.d.ts"
+      ],
+      "queues": [
+        "lib/internal/queues/index.d.ts"
+      ],
+      "schedules": [
+        "lib/internal/schedules/index.d.ts"
+      ],
+      "shared": [
+        "lib/shared/index.d.ts"
+      ],
+      "ws": [
+        "lib/internal/ws/index.d.ts"
+      ]
     }
   },
   "author": "nvms",
@@ -45,7 +63,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@prsm/keepalive-ws": "^0.2.0",
+    "@prsm/keepalive-ws": "^0.2.1",
     "@types/ws": "^8.5.3",
     "chalk": "^5.0.0",
     "dotenv": "^16.0.0",

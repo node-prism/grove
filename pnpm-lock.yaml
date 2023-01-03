@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@prsm/keepalive-ws': ^0.2.0
+  '@prsm/keepalive-ws': ^0.2.1
   '@types/express': ^4.17.13
   '@types/node': ^18.0.0
   '@types/node-cron': ^3.0.1
@@ -18,7 +18,7 @@ specifiers:
   ws: ^8.5.0
 
 dependencies:
-  '@prsm/keepalive-ws': 0.2.0
+  '@prsm/keepalive-ws': 0.2.1
   '@types/ws': 8.5.3
   chalk: 5.0.1
   dotenv: 16.0.1
@@ -59,8 +59,8 @@ packages:
       fastq: 1.13.0
     dev: false
 
-  /@prsm/keepalive-ws/0.2.0:
-    resolution: {integrity: sha512-4ipcHzKea75Mh5QmEKHMRDsxjeqtvuajEpzWgwpB6Hqwu3A+lggksc7H2Y4J5NytuUTOyJrYdMWoq+Dux67yaQ==}
+  /@prsm/keepalive-ws/0.2.1:
+    resolution: {integrity: sha512-cm/4x/ZNAs1O047buFOyf/x6l43qHbOUb0+n346/vhe5Opa/JAu1gRUEnmiT1hULokFPKHyvOzhiTCv9Ce2r8g==}
     dependencies:
       ws: 8.11.0
     transitivePeerDependencies:
