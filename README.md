@@ -2,6 +2,25 @@ A backend framework with a Next.js-esque filesystem-based API structure.
 
 An example project can be found at [github.com/node-prism/grove-example](https://github.com/node-prism/grove-example).
 
+# Table of contents
+
+* [Brief overview](#brief-overview)
+  * [Handling HTTP requests](#handling-http-requests)
+  * [Handling WebSocket messages](#handling-websocket-messages)
+* [Installation](#installation)
+* [Quickstart](#quickstart)
+* [.env](#env)
+* [HTTP route handlers](#http-route-handlers)
+  * [Middleware](#middleware)
+* [Error middleware](#error-middleware)
+  * [Flattened paths](#flattened-paths)
+  * [Reading the request body / query / path / headers](#reading-the-request-body--query--path--headers)
+* [Schedules](#schedules)
+* [Queues](#queues)
+  * [Adding jobs to a queue](#adding-jobs-to-a-queue)
+* [Sockets](#sockets)
+  * [Socket middleware](#socket-middleware)
+
 # Brief overview
 
 ## Handling HTTP requests
