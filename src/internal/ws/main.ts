@@ -44,8 +44,8 @@ export async function createSocketHandlers(app: GroveApp) {
 
   for (const filename of filenames) {
     const module = await loadModule<SocketModuleExports>(filename);
-    if (!module) throw new Error(`Failed to load module: ${filename}`);
-    if (!module.default) throw new Error(`Socket command modules must export default.`);
+    if (!module) throw new Error(`Failed to load module at path '${filename}'. Please ensure the file exists and is valid.`);
+    if (!module.default) throw new Error(`Failed to load socket command module at path '${filename}'. The module must have a default export that can be used as a WebSocket command.`);
 
     let route = parentDirname(filename.replace(`${app.root}/socket/`, "/"));
     logger({ level: LogLevel.DEBUG, scope: "ws" }, "socket namespace:", route);
