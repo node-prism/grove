@@ -14,7 +14,6 @@ interface QueueTask {
   callback?: ({ uuid, payload }: { uuid: string, payload: any }) => void;
 }
 
-
 interface QueueConfig {
   /** When a worker becomes free, it will wait `delay` before working. */
   delay?: string | number;
@@ -149,7 +148,7 @@ export default class Queue<Payload> extends EventEmitter {
     this.processTasks();
   }
 
-  #startExpirationTimer(expirationSeconds: string | number) {
+  private startExpirationTimer(expirationSeconds: string | number) {
     this.expiration = duration(expirationSeconds, 0);
     // This should never be true anyways, but...
     if (!this.isGroup) return;
@@ -287,7 +286,7 @@ export default class Queue<Payload> extends EventEmitter {
 
     group.isGroup = true;
     group.parentQueue = this;
-    group.#startExpirationTimer(this.config?.groups?.expiration ?? "10s");
+    group.startExpirationTimer(this.config?.groups?.expiration ?? "10s");
     group.executor = this.executor;
 
     group.emitter.on("destroy", () => {
