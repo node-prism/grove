@@ -47,7 +47,7 @@ export async function createSocketHandlers(app: GroveApp) {
     if (!module) throw new Error(`Failed to load module at path '${filename}'. Please ensure the file exists and is valid.`);
     if (!module.default) throw new Error(`Failed to load socket command module at path '${filename}'. The module must have a default export that can be used as a WebSocket command.`);
 
-    let route = parentDirname(filename.replace(`${app.root}/socket/`, "/"));
+    let route = lastDirname(filename.replace(`${app.root}/socket/`, "/"));
     logger({ level: LogLevel.DEBUG, scope: "ws" }, "socket namespace:", route);
 
     route = route.replace(/\/\_(?:\w|['-]\w)+\//g, "/");
@@ -83,6 +83,6 @@ export async function createSocketHandlers(app: GroveApp) {
   });
 }
 
-function parentDirname(filename: string): string {
+function lastDirname(filename: string): string {
   return path.dirname(filename).normalize();
 }
