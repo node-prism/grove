@@ -1,6 +1,6 @@
-A backend framework with a Next.js-esque filesystem-based API structure.
+This is a backend framework that employs a filesystem-based API structure.
 
-An example project can be found at [github.com/node-prism/grove-example](https://github.com/node-prism/grove-example).
+You can find an example project at [github.com/node-prism/grove-example](https://github.com/node-prism/grove-example).
 
 # Table of contents
 
@@ -133,8 +133,7 @@ The typical folder structure looks something like this:
 
 # .env
 
-If an `.env` file is discovered alongside `package.json`, `dotenv` automatically loads and injects the
-environment variables into `process.env`.
+If an `.env` file is detected next to the `package.json` file, `dotenv` will automatically load and insert the environment variables into `process.env`.
 
 The only grove-specific environment variable is `LOGLEVEL`, which can be one of:
 
@@ -182,8 +181,7 @@ export async function get(c: Context, { path: { id, rest } }) {
 }
 ```
 
-Handlers are wrapped in order to catch what would otherwise be an uncaught Promise rejection
-or thrown error by passing it to whatever Express error middlewares have been defined.
+In order to handle what would normally be an uncaught Promise rejection or thrown error, handlers are wrapped and the resulting error is routed to the defined Express error middlewares.
 
 ```typescript
 function throws() {
@@ -199,9 +197,7 @@ export async function get(c: Context) {
 The result of the above is that the error is caught and passed to the first middleware
 defined in `/src/app/errors.ts`, if it exists.
 
-This means that you don't need to wrap error-prone code within a try/catch and
-forward errors to your error-handling middleware with, e.g., `next(e)`, as this happens
-automatically for you.
+Consequently, you do not have to enclose code that is prone to errors in a try/catch block or manually route errors to your error-handling middleware using `next(e)`, as this process occurs automatically.
 
 ```typescript
 const grove = await createAPI("app", app, server);
@@ -217,7 +213,7 @@ grove.app.use((err, req, res, next) => {
 
 ## Middleware
 
-Let's assume we have the following endpoints:
+Suppose we have the following endpoints:
 
 ```bash
 /user/ (/src/app/http/user/index.ts)
@@ -242,8 +238,7 @@ export default [
 ];
 ```
 
-Another way to define middleware is to export a `middleware` object from a handler file, where the object keys
-are the request method that the middleware will be applied to, and the value is an array of middlewares.
+Another way to define middleware is to export a `middleware` object from a handler file, where the keys of the object correspond to the request method to which the middleware will be applied, and the value is an array of middlewares.
 
 ```typescript
 // /src/app/http/user/profile.ts
@@ -269,10 +264,7 @@ export const middleware = {
 
 # Error middleware
 
-You can optionally place an `errors.ts` file at your application's root (e.g. `/app/errors.ts`)
-which will be autodiscovered by grove and applied to Express as middleware. This file is expected
-to have a default export which is an array of Express middleware handlers. These middlewares are
-registered with Express *after* your filesystem-based routes are registered.
+You can also optionally put an `errors.ts` file at the root of your application (e.g., `/app/errors.ts`), which grove will detect and apply to Express as middleware. This file should have a default export that is an array of Express middleware handlers. These middlewares are registered with Express *after* your filesystem-based routes are registered.
 
 For example:
 
@@ -327,7 +319,7 @@ Consider the following folder structure:
 └── index.ts
 ```
 
-The result of the above is that handlers at `/user` are not behind authorization middleware whereas
+The above structure means that handlers at `/user` are not protected by authorization middleware, whereas
 handlers at `/user/profile` are.
 
 
@@ -379,7 +371,7 @@ export const config: Schedule = {
 
 Place your queue definitions in `/queues`.
 
-Each queue module is expected to export default an async function, which is the handler for each queued job. A `queue` object must also be exported which creates and configures the queue.
+Each queue module is expected to have a default export that is an asynchronous function, which serves as the handler for each queued job. Additionally, a `queue` object must be exported that generates and configures the queue.
 
 Here's an example queue definition.
 
@@ -402,15 +394,15 @@ export const queue = new Queue<MailPayload>({
   // Number of concurrent queue workers.
   concurrency: 1,
 
-  // When a worker becomes free, it will wait `delay` ms before processing the next job.
+  // Once a worker becomes available, it will wait delay ms before processing the next job.
   delay: 0,
 
-  // Once started, a task will fail if it does not resolve within `timeout` ms.
+  // After it is initiated, a task will fail if it does not resolve within timeout ms.
   timeout: 0,
 
-  // Groups allow for scoped queues based on a key, e.g. a recipient address.
-  // We may, for example, want to limit the number of emails we send to a given
-  // recipient in a given time period.
+  // Groups enable scoped queues based on a key, such as a recipient's address.
+  // This can be useful, for instance, if we want to restrict the number of emails we send to a particular
+  // recipient during a specific time period.
   //
   // By default, a group will inherit the queue's config above, but you can
   // override that config here.
@@ -424,14 +416,14 @@ export const queue = new Queue<MailPayload>({
 
 ## Adding jobs to a queue
 
-Import your queue and call `queue.push` to add a job to the queue.
+To add a job to the queue, import the queue and call `queue.push`.
 
 ```typescript
 import { queue as mailQueue } from "../queues/mail";
 mailQueue.push({ recipient, subject, body });
 ```
 
-You can monitor task status by listening to the events emitted by the queue. The queue will emit events when:
+To track task status, listen for events emitted by the queue. The queue will emit events when:
 
 1. A job is added to the queue
 2. A job is completed
@@ -463,8 +455,7 @@ export default async function({ recipient, subject, body }) {
 
 # Sockets
 
-`/src/app/socket/jobs/send-email.ts` maps to a command named `/jobs/send-email` at
-endpoint `ws://localhost:PORT/`. To execute a command, send a message with this shape:
+`/src/app/socket/jobs/send-email.ts` is associated with a command named `/jobs/send-email` at the endpoint `ws://localhost:PORT/`. To run a command, send a message in this format:
 
 ```typescript
 {
@@ -479,9 +470,9 @@ For example:
 wscat -c ws://localhost:3000/ -x '{"command": "/jobs/send-email", "payload": { "recipient": "somebody@gmail.com" }}'
 ```
 
-As usual, a socket command module is expected to export default an async function which is the handler for that command. The return value of the handler will be sent back to the client.
+As with other modules, a socket command module should have a default export that is an asynchronous function that serves as the command's handler. The handler's return value will be sent back to the client.
 
-Here's what the above `/src/app/socket/jobs/send-email.ts` module might look like:
+Here's an example of what the `/src/app/socket/jobs/send-email.ts` module might look like:
 
 ```typescript
 // /src/app/socket/jobs/send-email.ts
@@ -494,9 +485,9 @@ export default async function(c: Context) {
     body: c.payload.body,
   };
 
-  // Queued tasks optionally accept a callback. In this case, we pass a callback to the
-  // task so that when the task finishes, we can send a completion message back to the
-  // client that initiated the task.
+  // Queued tasks can receive an optional callback. Here, we pass a callback to the
+  // task so that when the task is complete, we can send a completion message to the
+  // client that launched the task.
   const callback = () => {
     c.connection.send({ command: "job:status", payload: { status: "finished" } });
   };
@@ -509,8 +500,7 @@ export default async function(c: Context) {
 
 ## Socket middleware
 
-Socket middlewares are very similar to HTTP middlewares.
-They are not Express middlewares, though, so they don't need to call `next` or return anything.
+Socket middlewares are quite similar to HTTP middlewares, but they are not Express middlewares. Therefore, they do not need to call `next` or return anything.
 
 ```typescript
 // /src/app/socket/jobs/_middleware.ts
@@ -526,9 +516,8 @@ export default [
 ];
 ```
 
-To fail from a socket middleware, just throw an Error. Command execution will then end and the
-command handler will not be called. The error message will be returned to the client,
-looking something like:
+To fail from a socket middleware, simply throw an Error. This will terminate command execution, and the
+command handler will not be invoked. The error message will be sent back to the client, and it will resemble the following:
 
 ```json
 {"id":0,"command":"start-job","payload":{"error":"Missing authentication token."}}
