@@ -41,8 +41,24 @@ import { GroveApp } from "../../shared/definitions";
  * //   bearer: 'abc123'
  * // }
  */
-function getRequestContext(route: string, req: Request) {
-  const ret = {
+type Key = {
+  name: string;
+  prefix: string;
+  suffix: string;
+  pattern: string;
+  modifier: string;
+};
+
+interface RequestContext {
+  path: Record<string, any>;
+  query: Record<string, any>;
+  body: Record<string, any>;
+  headers: Record<string, any>;
+  bearer: string;
+}
+
+function getRequestContext(route: string, req: Request): RequestContext {
+  const ret: RequestContext = {
     path: {},
     query: {},
     body: {},
@@ -51,7 +67,7 @@ function getRequestContext(route: string, req: Request) {
   };
 
   // path
-  const keys: Key[] | undefined = [];
+  const keys: Key[] = [];
   pathToRegexp(route, keys);
   keys.forEach((key) => {
     ret.path[key.name] = req.params[key.name];
@@ -63,9 +79,9 @@ function getRequestContext(route: string, req: Request) {
   ret.headers = req.headers;
 
   if (req.headers.authorization) {
-    const parts = req.headers.authorization.split(" ");
-    if (parts.length && parts[0].toLowerCase() === "bearer") {
-      ret.bearer = parts[1];
+    const [type, token] = req.headers.authorization.split(" ");
+    if (type.toLowerCase() === "bearer") {
+      ret.bearer = token;
     }
   }
 
