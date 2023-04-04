@@ -117,9 +117,11 @@ function createHmac(bits: number): IAlgorithm {
 }
 
 function createSign(bits: number): IAlgorithm {
+  const algorithm = `RSA-SHA${bits}`;
+  
   function sign(encoded: string, secret: string | Buffer): string {
     return crypto
-      .createSign(`SHA${bits}`)
+      .createSign(algorithm)
       .update(encoded)
       .sign(secret.toString(), "base64");
   }
@@ -129,7 +131,7 @@ function createSign(bits: number): IAlgorithm {
     signature: string,
     secret: string | Buffer
   ): boolean {
-    const v = crypto.createVerify(`RSA-SHA${bits}`);
+    const v = crypto.createVerify(algorithm);
     v.update(encoded);
     return v.verify(secret, signature, "base64");
   }
@@ -138,9 +140,11 @@ function createSign(bits: number): IAlgorithm {
 }
 
 function createEcdsa(bits: number): IAlgorithm {
+  const algorithm = `RSA-SHA${bits}`;
+
   function sign(encoded: string, secret: string | Buffer): string {
     const sig = crypto
-      .createSign(`RSA-SHA${bits}`)
+      .createSign(algorithm)
       .update(encoded)
       .sign({ key: secret.toString() }, "base64");
 
@@ -153,7 +157,7 @@ function createEcdsa(bits: number): IAlgorithm {
     secret: string | Buffer
   ): boolean {
     signature = joseToDer(signature, `ES${bits}`).toString("base64");
-    const v = crypto.createVerify(`RSA-SHA${bits}`);
+    const v = crypto.createVerify(algorithm);
     v.update(encoded);
     return v.verify(secret, signature, "base64");
   }
