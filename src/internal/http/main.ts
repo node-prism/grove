@@ -126,50 +126,29 @@ function getWrappedHandler(handler: Function, route: string) {
  * handlers defined in the "myModule" module. The middleware defined in the
  * `middleware` array will be applied to all of the handlers.
  */
-function createRouteHandlers(
-  module: HTTPModuleExports,
-  middleware: any,
-  route: string,
-  app: GroveApp
-) {
+function createRouteHandlers(module: HTTPModuleExports, middleware: any, route: string, app: GroveApp) {
   logger({ level: LogLevel.DEBUG, scope: "http" }, route);
 
-  if (module.default && typeof module.default === "function") {
+  if (typeof module.default === "function") {
     app.app.all(route, ...middleware, getWrappedHandler(module.default, route));
-    logger(
-      { level: LogLevel.DEBUG, scope: "http" },
-      `${route} | method: any -> export default`
-    );
+    logger({ level: LogLevel.DEBUG, scope: "http" }, `${route} | method: any -> export default`);
   }
 
-  ["get", "put", "post", "patch", "del", "options"].forEach((method) => {
-    if (!(module[method] && typeof module[method] === "function")) {
-      return;
+  const httpMethods = ["get", "put", "post", "patch", "del", "options"];
+
+  for (const method of httpMethods) {
+    const moduleMethod = module[method];
+    if (typeof moduleMethod !== "function") {
+      continue;
     }
 
-    // Append per-method middleware to the end of the middleware list.
-    let methodMiddleware = module?.middleware?.[method] || [];
-    if (methodMiddleware && !Array.isArray(methodMiddleware))
-    methodMiddleware = [methodMiddleware];
-    if (methodMiddleware.length)
-    methodMiddleware = wrapMiddlewareWithHTTPContext(
-      route,
-      methodMiddleware
-    );
+    const methodMiddleware = Array.isArray(module?.middleware?.[method])
+      ? wrapMiddlewareWithHTTPContext(route, module.middleware[method])
+      : [];
 
-    app.app[method === "del" ? "delete" : method](
-      route,
-      [...middleware, ...methodMiddleware],
-      getWrappedHandler(module[method], route)
-    );
-
-    logger(
-      { level: LogLevel.DEBUG, scope: "http" },
-      `${route} | method: ${
-          method === "del" ? "DELETE" : method.toUpperCase()
-        } -> export "${module[method].name}"`
-    );
-  });
+    app.app[method === "del" ? "delete" : method](route, [...middleware, ...methodMiddleware], getWrappedHandler(moduleMethod, route));
+    logger({ level: LogLevel.DEBUG, scope: "http" }, `${route} | method: ${method === "del" ? "DELETE" : method.toUpperCase()} -> export "${moduleMethod.name}"`);
+  }
 }
 
 export default async function createHTTPHandlers(
