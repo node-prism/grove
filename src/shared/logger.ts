@@ -1,48 +1,41 @@
 import chalk, { ChalkInstance } from "chalk";
 
 function getKeyByValue(object: object, value: any) {
-  return Object.keys(object).find((key) => object[key] === value);
+  return Object.keys(object).find(key => object[key] === value);
 }
 
 export enum LogLevel {
-  SILENT = 0,
-  INFO = 1,
-  WARN = 2,
-  ERROR = 3,
-  DEBUG = 4,
+  SILENT,
+  INFO,
+  WARN,
+  ERROR,
+  DEBUG
 }
 
-export const levels: { [key: string]: number } = {
-  info: 1,
-  warn: 2,
-  error: 3,
-  debug: 4,
+const levels = {
+  info: LogLevel.INFO,
+  warn: LogLevel.WARN,
+  error: LogLevel.ERROR,
+  debug: LogLevel.DEBUG
 };
 
-const colors: { [level: number]: ChalkInstance } = {
-  1: chalk.green,
-  2: chalk.yellow,
-  3: chalk.red,
-  4: chalk.blue,
+const colors = {
+  [LogLevel.INFO]: chalk.green,
+  [LogLevel.WARN]: chalk.yellow,
+  [LogLevel.ERROR]: chalk.red,
+  [LogLevel.DEBUG]: chalk.blue
 };
 
-export default function ({ level, scope = undefined }: { level: LogLevel, scope?: string }, ...parts: any[]) {
+export default function log({ level, scope }: { level: LogLevel, scope?: string }, ...parts: any[]) {
   const loglevel = Number(process.env.LOGLEVEL ?? LogLevel.ERROR);
-  
-  if (level > loglevel || loglevel === LogLevel.SILENT) {
-    return;
-  }
+
+  if (level > loglevel || loglevel === LogLevel.SILENT) return;
 
   const levelName = colors[level](getKeyByValue(levels, level));
   const date = new Date();
   const formattedDate = chalk.cyan(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
-  const message = parts.join(" ");
-  
-  let output = `[${formattedDate}][${levelName}]`;
-  if (scope) {
-    output += `[${chalk.yellow(scope)}]`;
-  }
-  
-  output += ` ${message}`;
+  const message = parts.join(' ');
+
+  let output = `[${formattedDate}][${levelName}]${scope ? `[${chalk.yellow(scope)}]` : ''} ${message}`;
   console.log(output);
 }

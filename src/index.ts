@@ -19,25 +19,15 @@ export { GroveApp };
 dotenv.config();
 
 export async function createApi(appRoot: string, app: express.Express, server: ServerHTTP | ServerHTTPS): Promise<GroveApp> {
-  let api;
-
+  const api = {
+    app,
+    server,
+    root: path.join("/", path.resolve(path.dirname(selfPath()), appRoot)),
+    wss: new KeepAliveServer({ path: "/", noServer: true })
+  };
+  
   try {
-    api = {
-      app,
-      server,
-      root: path.join("/", path.resolve(path.dirname(selfPath()), appRoot)),
-      wss: new KeepAliveServer({ path: "/", noServer: true })
-    };
-  } catch (e) {
-    logger({ level: LogLevel.ERROR, scope: "init" }, String(e));
-    throw e;
-  }
-
-  try {
-    await createHTTPHandlers(api);
-    await createSocketHandlers(api);
-    await createQueues(api);
-    await createSchedules(api);
+    await Promise.all([createHTTPHandlers(api), createSocketHandlers(api), createQueues(api), createSchedules(api)]);
   } catch (e) {
     logger({ level: LogLevel.ERROR, scope: "init" }, String(e));
     throw e;
@@ -47,4 +37,3 @@ export async function createApi(appRoot: string, app: express.Express, server: S
 
   return api;
 }
-
