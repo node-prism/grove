@@ -13,8 +13,7 @@ export class Hasher {
 
   verify(encoded: string, unencoded: string): boolean {
     const { algorithm, salt } = this.parse(encoded);
-    const _encoded = this.hash(unencoded, algorithm, salt);
-    return _encoded === encoded;
+    return this.hash(unencoded, algorithm, salt) === encoded;
   }
 
   encode(string: string): string {
@@ -24,13 +23,9 @@ export class Hasher {
 
   hash(string: string, algorithm: Algorithm, salt: string): string {
     const hash = crypto.createHash(algorithm);
-
     hash.update(string);
     hash.update(salt, "utf8");
-
-    const digest = hash.digest("base64");
-
-    return `${algorithm}:${salt}:${digest}`;
+    return `${algorithm}:${salt}:${hash.digest("base64")}`;
   }
 
   private parse(encoded: string): { algorithm: Algorithm, salt: string, digest: string } {
