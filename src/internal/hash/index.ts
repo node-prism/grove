@@ -3,8 +3,6 @@ import crypto from "crypto";
 type Algorithm = "sha256" | "sha512";
 
 export class Hasher {
-  private static readonly hashers: { [key: string]: crypto.Hash } = {};
-
   private algorithm: "sha256" | "sha512";
   private saltLength: number;
 
@@ -25,16 +23,12 @@ export class Hasher {
   }
 
   hash(string: string, algorithm: Algorithm, salt: string): string {
-    let hasher = Hasher.hashers[algorithm];
-    if (!hasher) {
-      hasher = crypto.createHash(algorithm);
-      Hasher.hashers[algorithm] = hasher;
-    }
+    const hash = crypto.createHash(algorithm);
 
-    hasher.update(string);
-    hasher.update(salt, "utf8");
+    hash.update(string);
+    hash.update(salt, "utf8");
 
-    const digest = hasher.digest("base64");
+    const digest = hash.digest("base64");
 
     return `${algorithm}:${salt}:${digest}`;
   }
