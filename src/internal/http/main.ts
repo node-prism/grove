@@ -245,21 +245,14 @@ export default async function createHTTPHandlers(
  * { params: { ... }, query: { ... }, body: { ... }, headers: { ... }, bearer: "" }
  */
 function wrapMiddlewareWithHTTPContext(route: string, middleware: Function[]) {
-  return middleware.map((fn) => {
-    function handler(req: Request, res: Response, next: NextFunction) {
+  return middleware.map(fn => {
+    const handler = (req: Request, res: Response, next: NextFunction) => {
       const ec = new ExpressContext(req, res, next);
       const relevant = getRequestContext(route, req);
-      try {
-        fn(ec, relevant);
-      } catch (e) {
-        console.error("middleware wrapper handler caught error", e);
-      }
-      return;
-    }
-
-    // Give this handler the same 'name' as the provided middleware
+      try { fn(ec, relevant); }
+      catch (e) { console.error("middleware wrapper handler caught error", e); }
+    };
     Object.defineProperty(handler, "name", { value: fn.name, writable: false });
-
     return handler;
   });
 }
