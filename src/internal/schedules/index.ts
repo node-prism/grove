@@ -44,7 +44,6 @@ export default async function createSchedules(app: GroveApp) {
     // Throws if !module.config.cron || !module.default
     validateScheduleModuleExports(module, filename);
 
-
     if (!cron.validate(module.config.cron)) {
       throw new Error(`invalid cron schedule: ${module.config.cron}`);
     }
