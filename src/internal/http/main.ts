@@ -41,14 +41,6 @@ import { GroveApp } from "../../shared/definitions";
  * //   bearer: 'abc123'
  * // }
  */
-type Key = {
-  name: string;
-  prefix: string;
-  suffix: string;
-  pattern: string;
-  modifier: string;
-};
-
 interface RequestContext {
   path: Record<string, any>;
   query: Record<string, any>;
