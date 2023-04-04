@@ -202,33 +202,20 @@ export default async function createHTTPHandlers(
     const module = await loadModule<HTTPModuleExports>(filename);
     invariant(module, `failed to load module ${filename}`);
 
-    let route = pathFromFilename(filename.replace(`${app.root}/http/`, "/"));
-    // .build/api/_authenticated/admin/index.ts -> .build/api/admin/index.ts
-    route = route.replace(/\/\_(?:\w|['-]\w)+\//g, "/");
-
+    let route = pathFromFilename(filename.replace(`${app.root}/http/`, "/"))
+      .replace(/\/\_(?:\w|['-]\w)+\//g, "/");
     const signature = route.replace(/:(.*?)(\/|$)/g, ":$2");
     const identical = dupes.get(signature);
 
-    if (identical)
-      throw new Error(
-        `duplicate routes: "${identical}" and "${filename}": ${signature}`
-      );
-
+    if (identical) throw new Error(`duplicate routes: "${identical}" and "${filename}": ${signature}`);
     dupes.set(signature, filename);
 
-    logger(
-      { level: LogLevel.DEBUG, scope: "http" },
-      `route ${route} (${filename})`
-    );
-
-    let middleware = await loadMiddleware<Function>(
-      path.dirname(filename),
-      filename
-    );
-    middleware = wrapMiddlewareWithHTTPContext(route, middleware);
+    const middleware = wrapMiddlewareWithHTTPContext(route, await loadMiddleware<Function>(path.dirname(filename), filename));
 
     createRouteHandlers(module, middleware, route, app);
     defs.push({ route, filename });
+
+    logger({ level: LogLevel.DEBUG, scope: "http" }, `route ${route} (${filename})`);
   }
 
   return defs;
