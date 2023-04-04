@@ -301,11 +301,12 @@ function pathFromFilename(filename: string): string {
  * Express-style parameter names.
  */
 function renamePathProperties(filename: string): string {
-  return filename.replace(/\[(\.{3})?(.*?)\]/gi, (_, variadic, name) => {
-    if (!/^[a-z0-9_-]+$/i.test(name))
-      throw new Error(
-        "path parameters must be alphanumeric, dash, or underscore"
-      );
+  const pathParamRegex = /\[(\.{3})?(.*?)\]/gi;
+  const pathParamValidationRegex = /^[a-z0-9_-]+$/i;
+
+  return filename.replace(pathParamRegex, (_, variadic, name) => {
+    if (!pathParamValidationRegex.test(name))
+      throw new Error("path parameters must be alphanumeric, dash, or underscore");
     return variadic ? `:${name}*` : `:${name}`;
   });
 }
