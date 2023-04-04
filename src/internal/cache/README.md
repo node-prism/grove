@@ -2,17 +2,14 @@
 
 `useCache(callback, inputs, cacheDuration)`
 
-This cache helper accepts a callback, some inputs that are used as the cache key,
-and a `cacheDuration` like "1m", "30s", etc.
+This cache helper takes in a callback, some inputs that are used as the cache key,
+and a `cacheDuration`, which is a string like "1m" or "30s", or a number of milliseconds.
 
-The operation is stored in a `CacheMap` where the map key is
-the stringified inputs and the value is the result of `callback(...inputs)`.
+The operation is stored in a `CacheMap`, where the key is a stringified version of the input arguments and the value is the result of `callback(...inputs)`.
 
-Until the lifetime defined by `cacheDuration` has passed,
-the cached result of the provided callback will be returned by the call to `useCache`.
+The cached result of the provided callback will be returned by the call to `useCache` until the lifetime defined by `cacheDuration` has passed.
 
-A usage example of this might be a middleware that caches the JWT signature
-verification result using the client IP and the JWT as the cache key:
+An example of using this could be a middleware that caches the result of JWT signature verification using the client IP and the JWT as the cache key:
 
 ```typescript
 // ip-jwt-verification-middleware.ts
