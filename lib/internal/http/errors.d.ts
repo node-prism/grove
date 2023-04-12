@@ -4,4 +4,4 @@ import { GroveApp } from "../../shared/definitions";
  * it is expected to export default an array of express-compatible
  * error handlers. These error handlers will be registered with core.app.
  */
-export default function createErrorHandlers(app: GroveApp): Promise<any>;
+export default function createErrorHandlers(app: GroveApp): Promise<void>;

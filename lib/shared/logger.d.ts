@@ -5,10 +5,7 @@ export declare enum LogLevel {
     ERROR = 3,
     DEBUG = 4
 }
-export declare const levels: {
-    [key: string]: number;
-};
-export default function ({ level, scope }: {
+export default function log({ level, scope }: {
     level: LogLevel;
     scope?: string;
 }, ...parts: any[]): void;

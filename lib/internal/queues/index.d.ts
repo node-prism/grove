@@ -30,7 +30,6 @@ interface QueueConfig {
 }
 export declare function createQueues(app: GroveApp): Promise<void>;
 export default class Queue<Payload> extends EventEmitter {
-    #private;
     readonly config: QueueConfig;
     readonly delay_ms: number;
     readonly timeout_ms: number;
@@ -58,6 +57,7 @@ export default class Queue<Payload> extends EventEmitter {
     executor: Function;
     constructor(config: QueueConfig);
     cycle(): void;
+    private startExpirationTimer;
     private processTasks;
     createTimeoutPromise(uuid: string): Promise<unknown>;
     /**
