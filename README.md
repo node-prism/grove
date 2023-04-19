@@ -345,7 +345,15 @@ export async function get(c: Context, { bearer }) {}
 
 # Schedules
 
-Place your schedule definitions in `/src/app/schedules`.
+You must place your schedule definitions in `/src/app/schedules`. For example:
+
+```bash
+src
+└── app
+    └── schedules
+        ├── metrics.ts
+        └── backups.ts
+```
 
 These are expected to export default an async function, which is the handler for the scheduled task.
 
@@ -369,7 +377,15 @@ export const config: Schedule = {
 
 # Queues
 
-Place your queue definitions in `/queues`.
+You must place your queue definitions in `/queues`. For example:
+
+```bash
+src
+└── app
+    └── queues
+        ├── mailer.ts
+        └── llm-processor.ts
+```
 
 Each queue module is expected to have a default export that is an asynchronous function, which serves as the handler for each queued job. Additionally, a `queue` object must be exported that generates and configures the queue.
 
@@ -377,7 +393,7 @@ Here's an example queue definition.
 
 ```typescript
 // /src/app/queues/mail.ts
-import Queue from "prsm/queues";
+import Queue from "@prsm/queues";
 
 interface MailPayload {
   recipient: string;
