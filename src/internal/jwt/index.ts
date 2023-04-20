@@ -36,7 +36,6 @@ export interface JWTParts {
 }
 
 export interface VerifyOptions {
-  sig?: boolean;
   alg?: string;
   exp?: boolean;
   sub?: string | number;
@@ -170,14 +169,14 @@ function encodeJSONBase64(obj: any): string {
   return Base64ToURLEncoded(Buffer.from(j).toString("base64"));
 }
 
-/**
- * TODO:
- * If what's decoded isn't valid JSON, then parse throws and crashes
- * the server.
- */
 function decodeJSONBase64(str: string) {
   const dec = Buffer.from(URLEncodedToBase64(str), "base64").toString("utf-8");
-  return JSON.parse(dec);
+  try {
+    return JSON.parse(dec);
+  } catch (e) {
+    console.warn("Failed to parse JSON", dec, e)
+    return dec;
+  }
 }
 
 function Base64ToURLEncoded(b64: string): string {
@@ -197,6 +196,15 @@ function URLEncodedToBase64(enc: string): string {
   return enc.replace(/\-/g, "+").replace(/_/g, "/");
 }
 
+/**
+ * Encodes a payload into a JWT string with a specified algorithm.
+ *
+ * @param {JWTPayload} payload - The payload to encode into the JWT.
+ * @param {string | Buffer} key - The secret key used to sign the JWT.
+ * @param {Algorithm} alg - The algorithm used to sign the JWT. Defaults to "HS256".
+ * @throws {Error} If an invalid algorithm type is provided.
+ * @returns {string} The encoded JWT string.
+ */
 function encode(
   payload: JWTPayload,
   key: string | Buffer,
@@ -217,6 +225,13 @@ function encode(
   return `${unsigned}.${sig}`;
 }
 
+/**
+ * Decodes a JWT-encoded string and returns an object containing the decoded header, payload, and signature.
+ *
+ * @param {string} encoded - The JWT-encoded string to decode.
+ * @throws {Error} If the encoded string does not have exactly three parts separated by periods.
+ * @returns {JWTParts} An object containing the decoded header, payload, and signature of the token.
+ */
 function decode(encoded: string): JWTParts {
   const parts = encoded.split(".");
   if (parts.length !== 3) {
@@ -232,6 +247,19 @@ function decode(encoded: string): JWTParts {
   return { header, payload, signature };
 }
 
+/**
+ * Verifies an encoded token with the given secret key and options.
+ * @param encoded 
+ * @param key Secret key used to verify the signature of the encoded token.
+ * @param opts The opts parameter of the verify function is an optional object that can contain the following properties:
+ * - alg: A string specifying the algorithm used to sign the token. If this property is not present in opts, the alg property from the decoded token header will be used.
+ * - iat: A number representing the timestamp when the token was issued. If present, this property will be compared to the iat claim in the token's payload.
+ * - iss: A string representing the issuer of the token. If present, this property will be compared to the iss claim in the token's payload.
+ * - jti: A string representing the ID of the token. If present, this property will be compared to the jti claim in the token's payload.
+ * - sub: A string representing the subject of the token. If present, this property will be compared to the sub claim in the token's payload.
+ * - aud: A string or number representing the intended audience(s) for the token. If present, this property will be compared to the aud claim in the token's payload.
+ * @returns 
+ */
 function verify(
   encoded: string,
   key: string | Buffer,
@@ -245,13 +273,11 @@ function verify(
   const verifier = Algorithms[alg];
   const result: VerifyResult = { decoded };
 
-  if (opts.sig === undefined || opts.sig === true) {
-    result.sig = verifier.verify(
-      `${parts[0]}.${parts[1]}`,
-      URLEncodedToBase64(parts[2]),
-      key
-    );
-  }
+  result.sig = verifier.verify(
+    `${parts[0]}.${parts[1]}`,
+    URLEncodedToBase64(parts[2]),
+    key
+  );
 
   if (payload.exp !== undefined) {
     result.exp = payload.exp < now;
