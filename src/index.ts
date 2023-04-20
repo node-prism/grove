@@ -25,7 +25,7 @@ export async function createApi(appRoot: string, app: express.Express, server: S
     root: path.join("/", path.resolve(path.dirname(selfPath()), appRoot)),
     wss: new KeepAliveServer({ path: "/", noServer: true })
   };
-  
+
   try {
     await Promise.all([createHTTPHandlers(api), createSocketHandlers(api), createQueues(api), createSchedules(api)]);
   } catch (e) {

@@ -202,7 +202,7 @@ export default async function createHTTPHandlers(
     const module = await loadModule<HTTPModuleExports>(filename);
     invariant(module, `failed to load module ${filename}`);
 
-    let route = pathFromFilename(filename.replace(`${app.root}/http/`, "/"))
+    const route = pathFromFilename(filename.replace(`${app.root}/http/`, "/"))
       .replace(/\/\_(?:\w|['-]\w)+\//g, "/");
     const signature = route.replace(/:(.*?)(\/|$)/g, ":$2");
     const identical = dupes.get(signature);
