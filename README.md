@@ -1,4 +1,4 @@
-This is a backend framework that employs a filesystem-based API structure.
+A minimally invasive backend framework.
 
 You can find an example project at [github.com/node-prism/grove-example](https://github.com/node-prism/grove-example).
 
