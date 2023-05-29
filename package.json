@@ -22,7 +22,8 @@
   },
   "scripts": {
     "dev": "tsc --watch --declaration",
-    "test": "tsx src/tests/index.ts"
+    "test": "tsx src/tests/index.ts",
+    "release": "bumpp package.json --commit 'Release %s' --push --tag && pnpm publish --access public"
   },
   "typesVersions": {
     "*": {
@@ -61,6 +62,7 @@
     "@types/express": "^4.17.13",
     "@types/node": "^18.0.0",
     "@types/node-cron": "^3.0.1",
+    "bumpp": "^9.1.0",
     "manten": "0.1.0",
     "tsx": "^3.12.6",
     "typescript": "^4.5.5"
