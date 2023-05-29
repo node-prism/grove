@@ -1,3 +1,7 @@
+# grove
+
+[![NPM version](https://img.shields.io/npm/v/@prsm/grove?color=a1b858&label=)](https://www.npmjs.com/package/@prsm/grove)
+
 A minimally invasive backend framework.
 
 You can find an example project at [github.com/node-prism/grove-example](https://github.com/node-prism/grove-example).
